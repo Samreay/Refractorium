@@ -195,7 +195,14 @@ rgbToHex = function (color) {
     for (var i = 0; i < 3; i++) {
         hexString += this.toHex(Math.floor(color[i]));
     }
-    return hexString;
+};
+rgbToString = function (color) {
+    var string = "rgba("
+    for (var i = 0; i < 3; i++) {
+        string += this.Math.floor(color[i]) + ", ";
+    }
+    string += "0.5)";
+    return string;
 };
 var LightSource = function(posx, posy) {
     this.posx = posx;

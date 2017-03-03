@@ -32,7 +32,7 @@ var drawRandomLine = function (ctx, num) {
     for (var i = 0; i < num; i++) {
         var ray = scene.lightRaysToRender[i];
 
-        var colour = rgbToHex(nmToRGB(ray.lambda));
+        var colour = rgbToString(nmToRGB(ray.lambda));
         ctx.strokeStyle = colour;
 
         for (var j = 0; j < ray.history.length; j++) {
@@ -67,7 +67,7 @@ var render = function () {
         floatBuf2.fill(1);
     }
     image.data = imageData;
-    var buf = drawRandomLine(ctx, 250);
+    var buf = drawRandomLine(ctx, 500);
     vec_add(floatBuf, buf);
     vec_power(floatBuf, floatBuf2);
     vec_boost_mean(floatBuf2, floatBuf2, 120);
