@@ -62,10 +62,10 @@ Scene.prototype.addLightRay = function () {
 
         if (distances.length == 0) {
             console.error("NO COLLISION");
-            ray.change_direction(ray.posx + ray.dx, ray.posy + ray.dy, 0, 0);
+            ray.change_direction(ray.posx + ray.dx, ray.posy + ray.dy, 0, 0, 0);
         } else {
             var close = intersections[vec_imin(distances)];
-            ray.change_direction(close[1], close[2], close[3], close[4]);
+            ray.change_direction(close[1], close[2], close[3], close[4], close[5]);
         }
         if (ray.power < 0.1) {
             break;
@@ -188,13 +188,12 @@ Box.prototype.intersect = function(ray) {
     var theta_bounce = (2 * Math.PI + close[3]) % (2 * Math.PI);
     var angle_incidence =  0.5 * Math.min(Math.abs((theta_out - theta_bounce)), Math.abs((2 * Math.PI + theta_out - theta_bounce)));
     var reflectivity = r_0 + (1 - r_0) * Math.pow((1 - Math.cos(angle_incidence)), 5);
-    if (Math.random() < reflectivity) {
-        if (reflectivity > 1) {
-            console.log("wut")
-        }
+    if (angle_incidence > Math.asin(nratio)) {
+        return close;
+    } else if (Math.random() < reflectivity) {
         close[4] *= reflectivity;
     } else {
-        var new_angle = (Math.PI + close[3] + angle_incidence) + Math.asin(Math.sin(angle_incidence) / nratio);
+        var new_angle = (Math.PI + theta_out + angle_incidence) + Math.sign(theta_out - theta_bounce) * Math.asin(Math.sin(angle_incidence) / nratio);
         close[3] = (4 * Math.PI + new_angle) % (2 * Math.PI);
         close[4] *= (1 - reflectivity);
         close[5] = 1 - close[5];
@@ -289,7 +288,7 @@ var LightSource = function(posx, posy) {
 };
 LightSource.prototype.getLightRay = function() {
     var theta = 2 * Math.PI * Math.random();
-    // var theta = -2.5 + 0.3 * Math.PI * Math.random();
+    // var theta = -2.4 + 0.3 * Math.PI * Math.random();
     var wavelength = Math.random() * (700 - 400) + 400;
     return new LightRay(this.posx, this.posy, theta, wavelength);
 };
