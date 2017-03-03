@@ -97,3 +97,22 @@ function vec_log(input, output) {
         }
     }
 }
+function norm() {
+    var u = 1 - Math.random(); // Subtraction to flip [0, 1) to (0, 1].
+    var v = 1 - Math.random();
+    return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
+}
+
+function rand_deflection(reflection, roughness, barrier) {
+    if (roughness == 0) {
+        return reflection;
+    }
+    var final_angle = 0;
+    var diff = 0;
+    var sign = Math.sign(reflection - barrier);
+    do {
+        final_angle = (reflection + (norm() * roughness)) % Math.PI;
+        diff = (final_angle - barrier) % (2 * Math.PI)
+    } while (diff > sign * Math.PI || diff < 0);
+    return final_angle % (2 * Math.PI);
+}

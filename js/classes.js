@@ -26,10 +26,10 @@ var Scene = function() {
     this.lightSource = null;
     this.lightRaysToRender = [];
 
-    this.objects.push(new Line(0, 0, 1, 0, 0));
-    this.objects.push(new Line(0, 0, 0, 1, 0));
-    this.objects.push(new Line(0, 1, 1, 1, 0));
-    this.objects.push(new Line(1, 0, 1, 1, 0));
+    this.objects.push(new Line(0, 0, 1, 0, 0, 0));
+    this.objects.push(new Line(0, 0, 0, 1, 0, 0));
+    this.objects.push(new Line(0, 1, 1, 1, 0, 0));
+    this.objects.push(new Line(1, 0, 1, 1, 0, 0));
 };
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
@@ -71,7 +71,7 @@ Scene.prototype.addLightRay = function () {
     this.lightRaysToRender.push(ray);
 };
 
-var Line = function(startx, starty, endx, endy, reflectivity) {
+var Line = function(startx, starty, endx, endy, reflectivity, roughness) {
     this.startx = startx;
     this.starty = starty;
     this.endx = endx;
@@ -86,6 +86,7 @@ var Line = function(startx, starty, endx, endy, reflectivity) {
     this.dx = this.endx - this.startx;
     this.dy = this.endy - this.starty;
     this.reflectivity = reflectivity;
+    this.roughness = roughness;
 };
 
 Line.prototype.intersect = function(lightray) {
@@ -109,7 +110,10 @@ Line.prototype.intersect = function(lightray) {
     }
     var intersectx = lightray.posx + dist_ray * lightray.dx;
     var intersecty = lightray.posy + dist_ray * lightray.dy;
-    return [dist_ray, intersectx, intersecty, 2 * this.theta - lightray.theta, this.reflectivity];
+
+    var angle = (2 * Math.PI + 2 * this.theta - lightray.theta) % (2 * Math.PI);
+    angle = rand_deflection(angle, this.roughness, this.theta);
+    return [dist_ray, intersectx, intersecty, angle, this.reflectivity];
 };
 Line.prototype.render = function(c, w, h) {
     c.lineWidth = 4;
@@ -199,6 +203,7 @@ var LightSource = function(posx, posy) {
 };
 LightSource.prototype.getLightRay = function() {
     var theta = 2 * Math.PI * Math.random();
+    // var theta = -0.8 + 0.2 * Math.PI * Math.random();
     var wavelength = Math.random() * (700 - 400) + 400;
     return new LightRay(this.posx, this.posy, theta, wavelength);
 };

@@ -19,9 +19,10 @@ var debug = function (message) {
 
 var scene = new Scene();
 scene.setLightSource(new LightSource(0.5, 0.5));
-scene.addObject(new Line(0.7, 0.2, 0.95, 0.7, 1.0));
-scene.addObject(new Line(0.1, 0.3, 0.3, 0.1, 1.0));
-scene.addObject(new Line(0.1, 0.85, 0.3, 0.99, 0.5));
+scene.addObject(new Line(0.7, 0.2, 0.95, 0.7, 1.0, 0.1));
+scene.addObject(new Line(0.7, 0.2, 0.95, 0.7, 1.0, 0));
+scene.addObject(new Line(0.1, 0.3, 0.3, 0.1, 1.0, 0.3));
+scene.addObject(new Line(0.1, 0.85, 0.3, 0.99, 0.5, 0.0));
 var drawRandomLine = function (ctx, num) {
     ctx.fillStyle = "#000000";
     var w = canvas.width;
@@ -66,10 +67,10 @@ var render = function () {
         floatBuf2.fill(1);
     }
     image.data = imageData;
-    var buf = drawRandomLine(ctx, 500);
+    var buf = drawRandomLine(ctx, 250);
     vec_add(floatBuf, buf);
     vec_power(floatBuf, floatBuf2);
-    vec_boost_mean(floatBuf2, floatBuf2, 100);
+    vec_boost_mean(floatBuf2, floatBuf2, 120);
     vec_add(floatBuf2, background);
     vec_clip(floatBuf2, image.data);
 
@@ -80,4 +81,4 @@ var render = function () {
 
 console.log("Done");
 // render();
-window.setInterval(render, 100);
+window.setInterval(render, 200);
