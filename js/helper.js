@@ -48,11 +48,12 @@ function vec_normalise_channels(a, b) {
         if (a[i + 2] > maxb) { maxb = a[i + 2]; }
         if (a[i + 3] > maxa) { maxa = a[i + 3]; }
     }
+    var boost = 2;
     for (var i = 0; i < a.length; i+=4) {
-        b[i] = Math.min(255, 3 * 255 * a[i] / maxr);
-        b[i + 1] = Math.min(255, 3 * 255 * a[i + 1] / maxg);
-        b[i + 2] = Math.min(255, 3 * 255 * a[i + 2] / maxb);
-        b[i + 3] = Math.min(255, 3 * 255 * a[i + 3] / maxa);
+        b[i] = Math.min(255, boost * 255 * a[i] / maxr);
+        b[i + 1] = Math.min(255, boost * 255 * a[i + 1] / maxg);
+        b[i + 2] = Math.min(255, boost * 255 * a[i + 2] / maxb);
+        b[i + 3] = Math.min(255, boost * 255 * a[i + 3] / maxa);
     }
     return b;
 }

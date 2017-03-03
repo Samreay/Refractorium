@@ -178,7 +178,7 @@ Box.prototype.intersect = function(ray) {
         return null;
     }
     var close = intersections[vec_imin(distances)];
-    var refractive = this.refractive + ray.lambda / 1000;
+    var refractive = this.refractive + ray.lambda / 500;
     if (ray.inMedium) {
         var nratio = 1 / refractive;
     } else {

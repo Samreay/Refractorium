@@ -86,4 +86,4 @@ var render = function () {
 
 console.log("Done");
 // render();
-window.setInterval(render, 150);
+window.setInterval(render, 50);
