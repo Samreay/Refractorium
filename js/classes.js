@@ -178,12 +178,13 @@ Box.prototype.intersect = function(ray) {
         return null;
     }
     var close = intersections[vec_imin(distances)];
+    var refractive = this.refractive + ray.lambda / 1000;
     if (ray.inMedium) {
-        var nratio = 1 / this.refractive;
+        var nratio = 1 / refractive;
     } else {
-        var nratio = this.refractive; // Or 1/n if coming out
+        var nratio = refractive; // Or 1/n if coming out
     }
-    var r_0 = Math.pow((1 - this.refractive) / (this.refractive + 1), 2);
+    var r_0 = Math.pow((1 - refractive) / (refractive + 1), 2);
     var theta_out = (Math.PI + ray.theta) % (2 * Math.PI);
     var theta_bounce = (2 * Math.PI + close[3]) % (2 * Math.PI);
     var angle_incidence =  0.5 * angle_diff(theta_out, theta_bounce);
@@ -288,7 +289,7 @@ var LightSource = function(posx, posy) {
 };
 LightSource.prototype.getLightRay = function() {
     var theta = 2 * Math.PI * Math.random();
-    // var theta = -2.4 + 0.3 * Math.PI * Math.random();
+    // var theta = -2.4 + 0.0003 * Math.PI * Math.random();
     var wavelength = Math.random() * (700 - 400) + 400;
     return new LightRay(this.posx, this.posy, theta, wavelength);
 };

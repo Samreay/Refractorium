@@ -69,11 +69,12 @@ var render = function () {
     image.data = imageData;
     var buf = drawRandomLine(ctx, 500);
     vec_add(floatBuf, buf);
-    if (true) {
+    if (false) {
         vec_power(floatBuf, floatBuf2);
-        vec_boost_mean(floatBuf2, floatBuf2, 120);
+        vec_boost_mean(floatBuf2, floatBuf2, 10);
     } else {
-        vec_boost_mean(floatBuf, floatBuf2, 120);
+        // vec_boost_mean(floatBuf, floatBuf2, 10);
+        vec_normalise_channels(floatBuf, floatBuf2, 10);
     }
     vec_add(floatBuf2, background);
     vec_clip(floatBuf2, image.data);

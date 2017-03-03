@@ -33,11 +33,29 @@ function vec_normalise(a, b) {
         }
     }
     for (var i = 0; i < a.length; i++) {
-        b[i] = Math.min(255, 10 * 255 * a[i] / max);
+        b[i] = Math.min(255, 3 * 255 * a[i] / max);
     }
     return b;
 }
-
+function vec_normalise_channels(a, b) {
+    var maxr = -9e9;
+    var maxg = -9e9;
+    var maxb = -9e9;
+    var maxa = -9e9;
+    for (var i = 0; i < a.length; i+=4) {
+        if (a[i] > maxr) { maxr = a[i]; }
+        if (a[i + 1] > maxg) { maxg = a[i + 1]; }
+        if (a[i + 2] > maxb) { maxb = a[i + 2]; }
+        if (a[i + 3] > maxa) { maxa = a[i + 3]; }
+    }
+    for (var i = 0; i < a.length; i+=4) {
+        b[i] = Math.min(255, 3 * 255 * a[i] / maxr);
+        b[i + 1] = Math.min(255, 3 * 255 * a[i + 1] / maxg);
+        b[i + 2] = Math.min(255, 3 * 255 * a[i + 2] / maxb);
+        b[i + 3] = Math.min(255, 3 * 255 * a[i + 3] / maxa);
+    }
+    return b;
+}
 function vec_mean(a) {
     var sum = 0;
     for (var i = 0; i < a.length; i++) {
