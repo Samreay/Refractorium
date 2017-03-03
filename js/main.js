@@ -19,9 +19,9 @@ var debug = function (message) {
 
 var scene = new Scene();
 scene.setLightSource(new LightSource(0.5, 0.5));
-// scene.addObject(new Line(0.7, 0.2, 0.95, 0.7, 1.0, 0.1));
-// scene.addObject(new Line(0.1, 0.3, 0.3, 0.1, 1.0, 0.0));
-// scene.addObject(new Line(0.1, 0.85, 0.3, 0.99, 0.5, 0.0));
+scene.addObject(new Line(0.7, 0.2, 0.95, 0.7, 1.0, 0.1));
+scene.addObject(new Line(0.1, 0.3, 0.3, 0.1, 1.0, 0.0));
+scene.addObject(new Line(0.1, 0.85, 0.3, 0.99, 0.5, 0.0));
 scene.addObject(new Box(0.3, 0.1, 0.2, 0.2, 0.2, 1.7));
 var drawRandomLine = function (ctx, num) {
     ctx.fillStyle = "#000000";

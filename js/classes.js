@@ -186,7 +186,7 @@ Box.prototype.intersect = function(ray) {
     var r_0 = Math.pow((1 - this.refractive) / (this.refractive + 1), 2);
     var theta_out = (Math.PI + ray.theta) % (2 * Math.PI);
     var theta_bounce = (2 * Math.PI + close[3]) % (2 * Math.PI);
-    var angle_incidence =  0.5 * Math.min(Math.abs((theta_out - theta_bounce)), Math.abs((2 * Math.PI + theta_out - theta_bounce)));
+    var angle_incidence =  0.5 * angle_diff(theta_out, theta_bounce);
     var reflectivity = r_0 + (1 - r_0) * Math.pow((1 - Math.cos(angle_incidence)), 5);
     if (angle_incidence > Math.asin(nratio)) {
         return close;

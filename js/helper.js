@@ -116,3 +116,8 @@ function rand_deflection(reflection, roughness, barrier) {
     } while (diff > sign * Math.PI || diff < 0);
     return final_angle % (2 * Math.PI);
 }
+
+function angle_diff(a, b) {
+    var phi = Math.abs(b - a) % (2 * Math.PI);
+    return phi > Math.PI ? (2 * Math.PI) - phi : phi;
+}
