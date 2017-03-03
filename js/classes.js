@@ -8,8 +8,9 @@ var LightRay = function(posx, posy, theta, lambda) {
     this.lambda = lambda;
     this.power = 1;
     this.history = [];
+    this.inMedium = false;
 };
-LightRay.prototype.change_direction = function (intersectx, intersecty, theta, powerLoss) {
+LightRay.prototype.change_direction = function (intersectx, intersecty, theta, powerLoss, mediumChange) {
     var bias = 1  / Math.max(Math.abs(Math.cos(this.theta)), Math.abs(Math.sin(this.theta)));
     this.history.push([this.posx, this.posy, intersectx, intersecty, this.power * bias]);
     this.power *= powerLoss;
@@ -18,6 +19,9 @@ LightRay.prototype.change_direction = function (intersectx, intersecty, theta, p
     this.theta = theta;
     this.dx = Math.cos(theta);
     this.dy = Math.sin(theta);
+    if (mediumChange == 1) {
+        this.inMedium = !this.inMedium;
+    }
 };
 
 var Scene = function() {
@@ -113,16 +117,91 @@ Line.prototype.intersect = function(lightray) {
 
     var angle = (2 * Math.PI + 2 * this.theta - lightray.theta) % (2 * Math.PI);
     angle = rand_deflection(angle, this.roughness, this.theta);
-    return [dist_ray, intersectx, intersecty, angle, this.reflectivity];
+    return [dist_ray, intersectx, intersecty, angle, this.reflectivity, 0];
 };
 Line.prototype.render = function(c, w, h) {
-    c.lineWidth = 4;
-    c.strokeStyle = "#FF0000";
+    c.lineWidth = 2;
+    c.strokeStyle = "rgba(255, 255, 255, 0.4)";
     c.beginPath();
     c.moveTo(w * this.startx, h * this.starty);
     c.lineTo(w * this.endx, h * this.endy);
     c.stroke();
 };
+
+var Box = function(startx, starty, width, height, theta, refractive) {
+    this.startx = startx;
+    this.starty = starty;
+    this.width = width;
+    this.height = height;
+    this.theta = theta;
+    this.refractive = refractive;
+
+    var gamma = theta + 0.5 * Math.PI;
+    this.p2x = startx + height * Math.cos(gamma);
+    this.p2y = starty + height * Math.sin(gamma);
+    this.p3x = startx + width * Math.cos(theta);
+    this.p3y = starty + width * Math.sin(theta);
+    this.p4x = this.p3x + height * Math.cos(gamma);
+    this.p4y = this.p3y + height * Math.sin(gamma);
+
+    this.lines = [];
+    this.lines.push(new Line(startx, starty, this.p2x, this.p2y, 1.0, 0.0));
+    this.lines.push(new Line(startx, starty, this.p3x, this.p3y, 1.0, 0.0));
+    this.lines.push(new Line(this.p2x, this.p2y, this.p4x, this.p4y, 1.0, 0.0));
+    this.lines.push(new Line(this.p3x, this.p3y, this.p4x, this.p4y, 1.0, 0.0));
+
+};
+Box.prototype.render = function(c, w, h) {
+    c.fillStyle = "rgba(255, 255, 255, 0.3)";
+    c.strokeStyle = "rgba(255, 255, 255, 0.7)";
+    c.lineWidth = 0.5;
+    c.beginPath();
+    c.moveTo(w * this.startx, h * this.starty);
+    c.lineTo(w * this.p2x, h * this.p2y);
+    c.lineTo(w * this.p4x, h * this.p4y);
+    c.lineTo(w * this.p3x, h * this.p3y);
+    c.lineTo(w * this.startx, h * this.starty);
+    c.fill();
+    c.stroke()
+};
+Box.prototype.intersect = function(ray) {
+    var intersections = [];
+    var distances = [];
+    for (var j = 0; j < this.lines.length; j++) {
+        var intersection = this.lines[j].intersect(ray);
+        if (intersection != null) {
+            intersections.push(intersection);
+            distances.push(intersection[0]);
+        }
+    }
+    if (distances.length == 0) {
+        return null;
+    }
+    var close = intersections[vec_imin(distances)];
+    if (ray.inMedium) {
+        var nratio = 1 / this.refractive;
+    } else {
+        var nratio = this.refractive; // Or 1/n if coming out
+    }
+    var r_0 = Math.pow((1 - this.refractive) / (this.refractive + 1), 2);
+    var theta_out = (Math.PI + ray.theta) % (2 * Math.PI);
+    var theta_bounce = (2 * Math.PI + close[3]) % (2 * Math.PI);
+    var angle_incidence =  0.5 * Math.min(Math.abs((theta_out - theta_bounce)), Math.abs((2 * Math.PI + theta_out - theta_bounce)));
+    var reflectivity = r_0 + (1 - r_0) * Math.pow((1 - Math.cos(angle_incidence)), 5);
+    if (Math.random() < reflectivity) {
+        if (reflectivity > 1) {
+            console.log("wut")
+        }
+        close[4] *= reflectivity;
+    } else {
+        var new_angle = (Math.PI + close[3] + angle_incidence) + Math.asin(Math.sin(angle_incidence) / nratio);
+        close[3] = (4 * Math.PI + new_angle) % (2 * Math.PI);
+        close[4] *= (1 - reflectivity);
+        close[5] = 1 - close[5];
+    }
+    return close;
+};
+
 
 
 nmToRGB = function (wavelength) {
@@ -197,7 +276,7 @@ rgbToHex = function (color) {
     }
 };
 rgbToString = function (color) {
-    var string = "rgba("
+    var string = "rgba(";
     for (var i = 0; i < 3; i++) {
         string += this.Math.floor(color[i]) + ", ";
     }
@@ -210,7 +289,7 @@ var LightSource = function(posx, posy) {
 };
 LightSource.prototype.getLightRay = function() {
     var theta = 2 * Math.PI * Math.random();
-    // var theta = -0.8 + 0.2 * Math.PI * Math.random();
+    // var theta = -2.5 + 0.3 * Math.PI * Math.random();
     var wavelength = Math.random() * (700 - 400) + 400;
     return new LightRay(this.posx, this.posy, theta, wavelength);
 };
