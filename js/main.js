@@ -4,7 +4,7 @@ var canvas2 = document.getElementById("hiddenCanvas");
 var scene = new Scene();
 // scene.setLightSource(new PointSource(0.5, 0.5));
 // scene.setLightSource(new ConeSource(0.7, 0.4, 0.5, 0.25));
-scene.setLightSource(new BeamSource(0.7, 0.4, 0.1, 0));
+// scene.setLightSource(new LaserSource(0.7, 0.4, 2.8));
 
 scene.addObject(new Line(0.1, 0.85, 0.30, 0.99, 0.0, 0.5, 0.0));
 scene.addObject(new Line(0.7, 0.20, 0.95, 0.70, 0.0, 0.0, 1.0));
@@ -20,6 +20,6 @@ scene.addObject(new Prism(0.4, 0.58, 0.2, 0.2, 3.14, 0.0, 0.0, 1.2, 0.0));
 // scene.addObject(new Cylinder(0.4, 0.50, 0.3, 0.0, 0.3, 1.1, 0.0));
 
 
-var renderer = new Renderer(canvas, canvas2, scene, 500, 9);
+var renderer = new Renderer(canvas, canvas2, scene, 500, 19);
 
 window.setInterval(renderer.render.bind(renderer), 100);

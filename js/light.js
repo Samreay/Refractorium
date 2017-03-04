@@ -89,6 +89,24 @@ BeamSource.prototype.getLightRays = function(num) {
     return rays;
 };
 
+var LaserSource = function(posx, posy, theta) {
+    this.posx = posx;
+    this.posy = posy;
+    this.theta = theta;
+    this.dx = this.endx - posx;
+    this.dy = this.endy - posy;
+};
+LaserSource.prototype.getLightRays = function(num) {
+    var rays = [];
+    for (var i = 0; i < num; i++) {
+        var wavelength = Math.random() * (670 - 400) + 400;
+        var ray = new LightRay(this.posx, this.posy, this.theta, wavelength);
+        rays.push(ray);
+
+    }
+    return rays;
+};
+
 nmToRGB = function (wavelength) {
 
 

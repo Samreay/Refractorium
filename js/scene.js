@@ -52,8 +52,6 @@ Scene.prototype.simulateLightRay = function (ray, numBounces) {
 };
 
 
-
-
 var Line = function(startx, starty, endx, endy, absorption, reflectivity, roughness) {
     this.startx = startx;
     this.starty = starty;
