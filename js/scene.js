@@ -183,21 +183,21 @@ Cylinder.prototype.render = function(c, w, h) {
 Cylinder.prototype.intersect = function(ray) {
     var dx = ray.dx;
     var dy = ray.dy;
-    var dr = Math.sqrt(dx * dx + dy * dy);
+    var dr2 = dx * dx + dy * dy;
     var posx = ray.posx - this.posx;
     var posy = ray.posy - this.posy;
     var d = posx * (posy + dy) - (posx + dx) * posy;
 
-    var discriminant = this.radius * this.radius * dr * dr - d * d;
+    var discriminant = this.radius * this.radius * dr2 - d * d;
     if (discriminant <= 0) {
         return null;
     }
     var sqrt_discriminant = Math.sqrt(discriminant);
 
-    var x1 = (d * dy + Math.sign(dy) * dx * sqrt_discriminant) / (dr * dr);
-    var x2 = (d * dy - Math.sign(dy) * dx * sqrt_discriminant) / (dr * dr);
-    var y1 = (-d * dx + Math.abs(dy) * sqrt_discriminant) / (dr * dr);
-    var y2 = (-d * dx - Math.abs(dy) * sqrt_discriminant) / (dr * dr);
+    var x1 = (d * dy + Math.sign(dy) * dx * sqrt_discriminant) / (dr2);
+    var x2 = (d * dy - Math.sign(dy) * dx * sqrt_discriminant) / (dr2);
+    var y1 = (-d * dx + Math.abs(dy) * sqrt_discriminant) / (dr2);
+    var y2 = (-d * dx - Math.abs(dy) * sqrt_discriminant) / (dr2);
 
     var dist1 = (x1 + this.posx - ray.posx) / ray.dx;
     var dist2 = (x2 + this.posx - ray.posx) / ray.dx;
