@@ -109,6 +109,10 @@ Line.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.stroke();
 };
 
+
+
+
+
 var Box = function(startx, starty, width, height, theta, absorption, reflectivity, refractive, roughness) {
     this.startx = startx;
     this.starty = starty;
@@ -129,10 +133,10 @@ var Box = function(startx, starty, width, height, theta, absorption, reflectivit
     this.p4y = this.p3y + height * Math.sin(gamma);
 
     this.lines = [];
-    this.lines.push(new Line(startx, starty, this.p2x, this.p2y, 1.0, 0.0));
-    this.lines.push(new Line(startx, starty, this.p3x, this.p3y, 1.0, 0.0));
-    this.lines.push(new Line(this.p2x, this.p2y, this.p4x, this.p4y, 1.0, 0.0));
-    this.lines.push(new Line(this.p3x, this.p3y, this.p4x, this.p4y, 1.0, 0.0));
+    this.lines.push(new Line(startx, starty, this.p2x, this.p2y, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(startx, starty, this.p3x, this.p3y, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.p2x, this.p2y, this.p4x, this.p4y, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.p3x, this.p3y, this.p4x, this.p4y, 0.0, 1.0, 0.0));
 
 };
 Box.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
@@ -172,6 +176,75 @@ Box.prototype.intersect = function(ray) {
     close[5] = result[2];
     return close;
 };
+
+
+
+
+var Prism = function(startx, starty, width, height, theta, absorption, reflectivity, refractive, roughness) {
+    this.startx = startx;
+    this.starty = starty;
+    this.width = width;
+    this.height = height;
+    this.theta = theta;
+    this.absorption = absorption;
+    this.reflectivity = reflectivity;
+    this.refractive = refractive;
+    this.roughness = roughness;
+
+    var gamma = theta + 0.5 * Math.PI;
+    this.p2x = startx + width * Math.cos(theta);
+    this.p2y = starty + width * Math.sin(theta);
+    this.p3x = startx + 0.5 * width * Math.cos(theta) + height * Math.cos(gamma);
+    this.p3y = starty + 0.5 * width * Math.sin(theta) + height * Math.sin(gamma);
+
+
+    this.lines = [];
+    this.lines.push(new Line(startx, starty, this.p2x, this.p2y, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(startx, starty, this.p3x, this.p3y, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.p2x, this.p2y, this.p3x, this.p3y, 0.0, 1.0, 0.0));
+
+};
+Prism.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
+    c.fillStyle = fillStyle;
+    c.strokeStyle = strokeStyle;
+    c.lineWidth = 0.5;
+    c.beginPath();
+    c.moveTo(w * this.startx, h * this.starty);
+    c.lineTo(w * this.p2x, h * this.p2y);
+    c.lineTo(w * this.p3x, h * this.p3y);
+    c.lineTo(w * this.startx, h * this.starty);
+    c.fill();
+    c.stroke()
+};
+Prism.prototype.intersect = function(ray) {
+    var intersections = [];
+    var distances = [];
+    var normals = [];
+    for (var j = 0; j < this.lines.length; j++) {
+        var intersection = this.lines[j].intersect(ray);
+        if (intersection != null) {
+            intersections.push(intersection);
+            distances.push(intersection[0]);
+            normals.push(this.lines[j].normal)
+        }
+    }
+    if (distances.length == 0) {
+        return null;
+    }
+    var close = intersections[vec_imin(distances)];
+    var normal = normals[vec_imin(distances)];
+
+    var result = get_angle_permeable(ray, normal, this.absorption, this.reflectivity, this.refractive, this.roughness);
+    close[3] = result[0];
+    close[4] = result[1];
+    close[5] = result[2];
+    return close;
+};
+
+
+
+
+
 
 var Cylinder = function(posx, posy, radius, absorption, reflectivity, refractive, roughness) {
     this.posx = posx;
