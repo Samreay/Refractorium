@@ -26,9 +26,10 @@ LightRay.prototype.change_direction = function (intersectx, intersecty, theta, p
 };
 
 
-var PointSource = function(posx, posy) {
+var PointSource = function(brightness, posx, posy) {
     this.posx = posx;
     this.posy = posy;
+    this.brightness = brightness;
 };
 PointSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -38,17 +39,17 @@ PointSource.prototype.getLightRays = function(num) {
         var theta_chunk = 2 * Math.PI * i / num;
         var ray = new LightRay(this.posx, this.posy, offset + theta_chunk, wavelength);
         rays.push(ray);
-
     }
     return rays;
 };
 
 
-var ConeSource = function(posx, posy, dir, arc) {
+var ConeSource = function(brightness, posx, posy, dir, arc) {
     this.posx = posx;
     this.posy = posy;
     this.dir = (dir - 0.5 * arc) * 2 * Math.PI;
     this.arc = arc;
+    this.brightness = brightness;
 };
 ConeSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -63,7 +64,7 @@ ConeSource.prototype.getLightRays = function(num) {
     return rays;
 };
 
-var BeamSource = function(posx, posy, width, theta) {
+var BeamSource = function(brightness, posx, posy, width, theta) {
     this.posx = posx;
     this.posy = posy;
     this.width = width;
@@ -72,7 +73,7 @@ var BeamSource = function(posx, posy, width, theta) {
     this.endy = posy + width * Math.sin(theta + 0.5 * Math.PI);
     this.dx = this.endx - posx;
     this.dy = this.endy - posy;
-
+    this.brightness = brightness;
 };
 BeamSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -89,12 +90,13 @@ BeamSource.prototype.getLightRays = function(num) {
     return rays;
 };
 
-var LaserSource = function(posx, posy, theta) {
+var LaserSource = function(brightness, posx, posy, theta) {
     this.posx = posx;
     this.posy = posy;
     this.theta = theta;
     this.dx = this.endx - posx;
     this.dy = this.endy - posy;
+    this.brightness = brightness;
 };
 LaserSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -108,8 +110,6 @@ LaserSource.prototype.getLightRays = function(num) {
 };
 
 nmToRGB = function (wavelength) {
-
-
     var Gamma = 0.90,
         IntensityMax = 255,
         factor, red, green, blue;

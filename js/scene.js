@@ -3,9 +3,10 @@
 
 var Scene = function() {
     this.objects = [];
-    this.lightSource = null;
+    this.lightSources = [];
     this.lightRaysToRender = [];
 
+    this.totalBrightness = 0;
     this.objects.push(new Line(0, 0, 1, 0, 1, 0, 0));
     this.objects.push(new Line(0, 0, 0, 1, 1, 0, 0));
     this.objects.push(new Line(0, 1, 1, 1, 1, 0, 0));
@@ -14,12 +15,18 @@ var Scene = function() {
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
 };
-Scene.prototype.setLightSource = function (lightSource) {
-    this.lightSource = lightSource;
+Scene.prototype.addLightSource = function (lightSource) {
+    this.lightSources.push(lightSource);
+    this.totalBrightness += lightSource.brightness;
 };
 Scene.prototype.addLightRays = function(num, numBounces) {
-    var rays = this.lightSource.getLightRays(num);
-    for (var i = 0; i < num; i++) {
+    var raysPerBrightness = num / this.totalBrightness;
+    var rays = [];
+    for (var j = 0; j < this.lightSources.length; j++) {
+        var source = this.lightSources[j];
+        rays = rays.concat(source.getLightRays(Math.floor(source.brightness * raysPerBrightness)));
+    }
+    for (var i = 0; i < rays.length; i++) {
         this.simulateLightRay(rays[i], numBounces);
     }
 };
