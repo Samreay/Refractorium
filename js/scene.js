@@ -18,12 +18,12 @@ Scene.prototype.setLightSource = function (lightSource) {
     this.lightSource = lightSource;
 };
 Scene.prototype.addLightRays = function(num, numBounces) {
+    var rays = this.lightSource.getLightRays(num);
     for (var i = 0; i < num; i++) {
-        this.addLightRay(numBounces);
+        this.simulateLightRay(rays[i], numBounces);
     }
 };
-Scene.prototype.addLightRay = function (numBounces) {
-    var ray = this.lightSource.getLightRay();
+Scene.prototype.simulateLightRay = function (ray, numBounces) {
 
     for (var i = 0; i < numBounces; i++) {
         var intersections = [];

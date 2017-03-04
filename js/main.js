@@ -2,7 +2,9 @@ var canvas = document.getElementById("mainCanvas");
 var canvas2 = document.getElementById("hiddenCanvas");
 
 var scene = new Scene();
-scene.setLightSource(new LightSource(0.5, 0.5));
+// scene.setLightSource(new PointSource(0.5, 0.5));
+// scene.setLightSource(new ConeSource(0.7, 0.4, 0.5, 0.25));
+scene.setLightSource(new BeamSource(0.7, 0.4, 0.1, 0));
 
 scene.addObject(new Line(0.1, 0.85, 0.30, 0.99, 0.0, 0.5, 0.0));
 scene.addObject(new Line(0.7, 0.20, 0.95, 0.70, 0.0, 0.0, 1.0));

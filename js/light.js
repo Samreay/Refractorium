@@ -26,22 +26,68 @@ LightRay.prototype.change_direction = function (intersectx, intersecty, theta, p
 };
 
 
-var LightSource = function(posx, posy) {
+var PointSource = function(posx, posy) {
     this.posx = posx;
     this.posy = posy;
 };
-LightSource.prototype.getLightRay = function() {
-    var theta = 2 * Math.PI * Math.random();
-    // var theta = -2.4 + 0.0003 * Math.PI * Math.random();
-    // var theta = -0.2 + 0.06 * Math.PI * Math.random();
-    // var theta = -0.15 + 0.003 * Math.PI * Math.random();
-    var wavelength = Math.random() * (670 - 400) + 400;
-    return new LightRay(this.posx, this.posy, theta, wavelength);
+PointSource.prototype.getLightRays = function(num) {
+    var rays = [];
+    for (var i = 0; i < num; i++) {
+        var offset = 2 * Math.PI * Math.random() / num;
+        var wavelength = Math.random() * (670 - 400) + 400;
+        var theta_chunk = 2 * Math.PI * i / num;
+        var ray = new LightRay(this.posx, this.posy, offset + theta_chunk, wavelength);
+        rays.push(ray);
+
+    }
+    return rays;
 };
 
 
+var ConeSource = function(posx, posy, dir, arc) {
+    this.posx = posx;
+    this.posy = posy;
+    this.dir = (dir - 0.5 * arc) * 2 * Math.PI;
+    this.arc = arc;
+};
+ConeSource.prototype.getLightRays = function(num) {
+    var rays = [];
+    for (var i = 0; i < num; i++) {
+        var offset = this.arc * 2 * Math.PI * Math.random() / num;
+        var wavelength = Math.random() * (670 - 400) + 400;
+        var theta_chunk = this.arc * 2 * Math.PI * i / num;
+        var ray = new LightRay(this.posx, this.posy, this.dir + offset + theta_chunk, wavelength);
+        rays.push(ray);
 
+    }
+    return rays;
+};
 
+var BeamSource = function(posx, posy, width, theta) {
+    this.posx = posx;
+    this.posy = posy;
+    this.width = width;
+    this.theta = theta;
+    this.endx = posx + width * Math.cos(theta + 0.5 * Math.PI);
+    this.endy = posy + width * Math.sin(theta + 0.5 * Math.PI);
+    this.dx = this.endx - posx;
+    this.dy = this.endy - posy;
+
+};
+BeamSource.prototype.getLightRays = function(num) {
+    var rays = [];
+    for (var i = 0; i < num; i++) {
+        var length = (i + Math.random()) / num;
+        var px = this.posx + this.dx * length;
+        var py = this.posy + this.dy * length;
+
+        var wavelength = Math.random() * (670 - 400) + 400;
+        var ray = new LightRay(px, py, this.theta, wavelength);
+        rays.push(ray);
+
+    }
+    return rays;
+};
 
 nmToRGB = function (wavelength) {
 
