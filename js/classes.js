@@ -35,10 +35,10 @@ var Scene = function() {
     this.lightSource = null;
     this.lightRaysToRender = [];
 
-    // this.objects.push(new Line(0, 0, 1, 0, 0, 0));
-    // this.objects.push(new Line(0, 0, 0, 1, 0, 0));
-    // this.objects.push(new Line(0, 1, 1, 1, 0, 0));
-    // this.objects.push(new Line(1, 0, 1, 1, 0, 0));
+    this.objects.push(new Line(0, 0, 1, 0, 0, 0));
+    this.objects.push(new Line(0, 0, 0, 1, 0, 0));
+    this.objects.push(new Line(0, 1, 1, 1, 0, 0));
+    this.objects.push(new Line(1, 0, 1, 1, 0, 0));
 };
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
@@ -340,7 +340,7 @@ var LightSource = function(posx, posy) {
 LightSource.prototype.getLightRay = function() {
     var theta = 2 * Math.PI * Math.random();
     // var theta = -2.4 + 0.0003 * Math.PI * Math.random();
-    var theta = -0.2 + 10.6 * Math.PI * Math.random();
+    // var theta = -0.2 + 0.06 * Math.PI * Math.random();
     // var theta = 0.6 + 0.03 * Math.PI * Math.random();
     var wavelength = Math.random() * (700 - 400) + 400;
     return new LightRay(this.posx, this.posy, theta, wavelength);

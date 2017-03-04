@@ -121,17 +121,18 @@ function norm() {
     return Math.sqrt( -2.0 * Math.log( u ) ) * Math.cos( 2.0 * Math.PI * v );
 }
 
-function rand_deflection(reflection, roughness, barrier) {
-    if (roughness == 0) {
-        return reflection;
-    }
-    var final_angle = 0;
+function rand_deflection(reflection, roughness, normal) {
+    var final_angle = reflection;
     var diff = 0;
-    var sign = Math.sign(reflection - barrier);
+    var count = 5;
     do {
-        final_angle = (reflection + (norm() * roughness)) % Math.PI;
-        diff = (final_angle - barrier) % (2 * Math.PI)
-    } while (diff > sign * Math.PI || diff < 0);
+        count++;
+        if (count > 20) {
+            break;
+        }
+        final_angle = (reflection + (norm() * roughness));
+        diff = angle_diff(final_angle, normal)
+    } while (Math.abs(diff) > 0.5 * Math.PI);
     return final_angle % (2 * Math.PI);
 }
 
@@ -147,16 +148,6 @@ function get_angle_incidence(incoming, normal) {
 }
 
 function get_angle_permeable(ray, normal, absorb, refractive, roughness) {
-
-    if (roughness > 0) {
-        var deflection = 0;
-        var count = 0;
-        do {
-            count++;
-            deflection = norm() * roughness;
-        } while (Math.abs(deflection) > 100);
-        normal += deflection * 0.5 * Math.PI;
-    }
 
     var angles = get_angle_incidence(ray.theta, normal);
     var angle_incidence = angles[0];
@@ -188,6 +179,9 @@ function get_angle_permeable(ray, normal, absorb, refractive, roughness) {
     }
     if (isNaN(theta_out)) {
         console.log("But why")
+    }
+    if (roughness > 0) {
+        theta_out = rand_deflection(theta_out, roughness, normal);
     }
     return [theta_out, power, inMaterial];
 }
