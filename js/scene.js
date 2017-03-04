@@ -1,16 +1,17 @@
 
 
 
-var Scene = function() {
+var Scene = function(aspect) {
     this.objects = [];
     this.lightSources = [];
     this.lightRaysToRender = [];
+    this.aspect = aspect;
 
     this.totalBrightness = 0;
-    this.objects.push(new Line(0, 0, 1, 0, 1, 0, 0));
-    this.objects.push(new Line(0, 0, 0, 1, 1, 0, 0));
-    this.objects.push(new Line(0, 1, 1, 1, 1, 0, 0));
-    this.objects.push(new Line(1, 0, 1, 1, 1, 0, 0));
+    this.objects.push(new Line(0, 0, aspect, 0, 1, 0, 0));
+    this.objects.push(new Line(0, 0, 0, aspect, 1, 0, 0));
+    this.objects.push(new Line(0, 1, aspect, 1, 1, 0, 0));
+    this.objects.push(new Line(aspect, 0, aspect, 1, 1, 0, 0));
 };
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
@@ -109,8 +110,8 @@ Line.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.lineWidth = 2;
     c.strokeStyle = strokeStyle;
     c.beginPath();
-    c.moveTo(w * this.startx, h * this.starty);
-    c.lineTo(w * this.endx, h * this.endy);
+    c.moveTo(h * this.startx, h * this.starty);
+    c.lineTo(h * this.endx, h * this.endy);
     c.stroke();
 };
 
@@ -149,11 +150,11 @@ Box.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;
     c.beginPath();
-    c.moveTo(w * this.startx, h * this.starty);
-    c.lineTo(w * this.p2x, h * this.p2y);
-    c.lineTo(w * this.p4x, h * this.p4y);
-    c.lineTo(w * this.p3x, h * this.p3y);
-    c.lineTo(w * this.startx, h * this.starty);
+    c.moveTo(h * this.startx, h * this.starty);
+    c.lineTo(h * this.p2x, h * this.p2y);
+    c.lineTo(h * this.p4x, h * this.p4y);
+    c.lineTo(h * this.p3x, h * this.p3y);
+    c.lineTo(h * this.startx, h * this.starty);
     c.fill();
     c.stroke()
 };
@@ -214,10 +215,10 @@ Prism.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;
     c.beginPath();
-    c.moveTo(w * this.startx, h * this.starty);
-    c.lineTo(w * this.p2x, h * this.p2y);
-    c.lineTo(w * this.p3x, h * this.p3y);
-    c.lineTo(w * this.startx, h * this.starty);
+    c.moveTo(h * this.startx, h * this.starty);
+    c.lineTo(h * this.p2x, h * this.p2y);
+    c.lineTo(h * this.p3x, h * this.p3y);
+    c.lineTo(h * this.startx, h * this.starty);
     c.fill();
     c.stroke()
 };
@@ -262,7 +263,7 @@ var Cylinder = function(posx, posy, radius, absorption, reflectivity, refractive
 };
 Cylinder.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.beginPath();
-    c.arc(this.posx * w, this.posy * h, this.radius * w, 0, 2 * Math.PI, false);
+    c.arc(this.posx * h, this.posy * h, this.radius * h, 0, 2 * Math.PI, false);
     c.fillStyle = fillStyle;
     c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;

@@ -1,7 +1,22 @@
 var canvas = document.getElementById("mainCanvas");
 var canvas2 = document.getElementById("hiddenCanvas");
 
-var scene = new Scene();
+var width = 1080, height = 720;
+
+var canvasDiv = document.getElementById("canvases");
+var canvas = document.createElement("canvas");
+canvas.setAttribute("id", "mainCanvas");
+canvas.setAttribute("width", String(width));
+canvas.setAttribute("height", String(height));
+canvasDiv.appendChild(canvas);
+var canvas2 = document.createElement("canvas");
+canvas2.setAttribute("id", "hiddenCanvas");
+canvas2.setAttribute("width", String(width));
+canvas2.setAttribute("height", String(height));
+canvas2.setAttribute("style", "display: none;");
+canvasDiv.appendChild(canvas2);
+
+var scene = new Scene(width / height);
 scene.addLightSource(new PointSource(1.0, 0.5, 0.5));
 // scene.addLightSource(new ConeSource(1.0, 0.7, 0.4, 0.5, 0.25));
 // scene.addLightSource(new BeamSource(1.0, 0.7, 0.4, 0.1, 3.14));
@@ -23,4 +38,14 @@ scene.addObject(new Prism(0.4, 0.58, 0.2, 0.2, 3.14, 0.0, 0.0, 1.2, 0.0));
 
 var renderer = new Renderer(canvas, canvas2, scene, 500, 19);
 
+function switchPlots() {
+    renderer.showFinal = !renderer.showFinal;
+    return false;
+}
+
+canvas.addEventListener("dblclick", switchPlots, false);
+canvas2.addEventListener("dblclick", switchPlots, false);
+
+
 window.setInterval(renderer.render.bind(renderer), 100);
+

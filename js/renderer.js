@@ -17,7 +17,10 @@ var Renderer = function(finalCanvas, hiddenCanvas, scene, numRaysPerFrame, numBo
     this.finalBuffer = null;
     this.backgroundBuffer = null;
 
+    this.showFinal = true;
+
     this.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    // this.strokeStyle = "#FF0000";
     this.fillStyle = "rgba(100, 100, 100, 0.1)";
     // this.fillStyle = "rgba(0, 0, 0, 0)";
     this.init();
@@ -61,15 +64,15 @@ Renderer.prototype.renderFrame = function() {
     ctx.fillRect(0, 0, w, h);
     scene.addLightRays(this.numRaysPerFrame, this.numBounces);
 
-    for (var i = 0; i < this.numRaysPerFrame; i++) {
+    for (var i = 0; i < scene.lightRaysToRender.length; i++) {
         var ray = scene.lightRaysToRender[i];
         var colour = rgbToString(nmToRGB(ray.lambda));
         ctx.strokeStyle = colour;
 
         for (var j = 0; j < ray.history.length; j++) {
             ctx.beginPath();
-            ctx.moveTo(ray.history[j][0] * w, ray.history[j][1] * h);
-            ctx.lineTo(ray.history[j][2] * w, ray.history[j][3] * h);
+            ctx.moveTo(ray.history[j][0] * h, ray.history[j][1] * h);
+            ctx.lineTo(ray.history[j][2] * h, ray.history[j][3] * h);
             ctx.lineWidth = this.lineWidthScale * ray.history[j][4];
             ctx.stroke();
         }
@@ -82,10 +85,15 @@ Renderer.prototype.render = function() {
     var image = this.finalCtx.getImageData(0, 0, this.w, this.h);
 
     var frameBuffer = this.renderFrame();
-    vec_add(this.tempBuffer, frameBuffer);
-    vec_normalise_channels(this.tempBuffer, this.finalBuffer);
-    vec_add(this.finalBuffer, this.backgroundBuffer);
-    vec_clip(this.finalBuffer, image.data);
+    if (this.showFinal) {
+        vec_add(this.tempBuffer, frameBuffer);
+        vec_normalise_channels(this.tempBuffer, this.finalBuffer);
+        vec_add(this.finalBuffer, this.backgroundBuffer);
+        vec_clip(this.finalBuffer, image.data);
+    } else {
+        vec_clip(frameBuffer, image.data);
+    }
+
 
     this.finalCtx.putImageData(image, 0, 0);
 
