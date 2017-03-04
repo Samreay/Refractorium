@@ -43,7 +43,7 @@ Renderer.prototype.drawBackground = function() {
         console.error("Canvases are diff height");
     }
     var c = this.hiddenCtx;
-    c.fillStyle = "black";
+    c.fillStyle = "#111111";
     c.fillRect(0, 0, this.w, this.h);
     var imageData = c.getImageData(0, 0, this.w, this.h).data;
     this.tempBuffer = new Float32Array(imageData.length);
