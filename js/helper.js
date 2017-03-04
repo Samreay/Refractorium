@@ -111,7 +111,6 @@ function vec_power(input, output) {
 function vec_log(input, output) {
     for (var i = 0; i < input.length; i++) {
         if (input[i] > 0) {
-
             output[i] = Math.log(input[i]);
         }
     }
@@ -137,6 +136,58 @@ function rand_deflection(reflection, roughness, barrier) {
 }
 
 function angle_diff(a, b) {
-    var phi = Math.abs(b - a) % (2 * Math.PI);
-    return phi > Math.PI ? (2 * Math.PI) - phi : phi;
+    var phi = (2 * Math.PI + (b - a)) % (2 * Math.PI);
+    return phi > Math.PI ? phi -(2 * Math.PI) : phi;
+}
+
+function get_angle_incidence(incoming, normal) {
+    var a1 = angle_diff(incoming + Math.PI, normal);
+    var a2 = angle_diff(incoming, normal);
+    return Math.abs(a1) < Math.abs(a2) ? [a1, normal] : [a2, normal + Math.PI];
+}
+
+function get_angle_permeable(ray, normal, absorb, refractive, roughness) {
+
+    if (roughness > 0) {
+        var deflection = 0;
+        var count = 0;
+        do {
+            count++;
+            deflection = norm() * roughness;
+        } while (Math.abs(deflection) > 100);
+        normal += deflection * 0.5 * Math.PI;
+    }
+
+    var angles = get_angle_incidence(ray.theta, normal);
+    var angle_incidence = angles[0];
+    normal = angles[1];
+    var theta_out = normal + angle_incidence;
+    var power = (1 - absorb);
+    var inMaterial = false;
+
+    if (refractive != null) {
+        refractive = refractive + (ray.lambda - 400) / 3000;
+        if (ray.inMedium) {
+            var nratio = 1 / refractive;
+        } else {
+            var nratio = refractive; // Or 1/n if coming out
+        }
+        var r_0 = Math.pow((1 - refractive) / (refractive + 1), 2);
+        var reflectivity = r_0 + (1 - r_0) * Math.pow((1 - Math.cos(angle_incidence)), 5);
+        if (!(Math.abs(angle_incidence) > Math.asin(nratio)) && Math.random() < reflectivity) {
+            power *= reflectivity;
+        } else {
+            var new_angle = (Math.PI + normal) - Math.sign(angle_incidence) * Math.asin(Math.sin(Math.abs(angle_incidence)) / nratio);
+            if (!isNaN(new_angle)) {
+                // NaN means total internal reflection
+                theta_out = (4 * Math.PI + new_angle) % (2 * Math.PI);
+                power *= (1 - reflectivity);
+                inMaterial = true;
+            }
+        }
+    }
+    if (isNaN(theta_out)) {
+        console.log("But why")
+    }
+    return [theta_out, power, inMaterial];
 }
