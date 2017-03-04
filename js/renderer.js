@@ -1,12 +1,13 @@
 
 
-var Renderer = function(finalCanvas, hiddenCanvas, scene, numRaysPerFrame) {
+var Renderer = function(finalCanvas, hiddenCanvas, scene, numRaysPerFrame, numBounces) {
     this.finalCanvas = finalCanvas;
     this.finalCtx = finalCanvas.getContext('2d');
     this.hiddenCanvas = hiddenCanvas;
     this.hiddenCtx = hiddenCanvas.getContext('2d');
     this.scene = scene;
     this.numRaysPerFrame = numRaysPerFrame;
+    this.numBounces = numBounces;
 
     this.lineWidthScale = 0.5;
 
@@ -15,6 +16,10 @@ var Renderer = function(finalCanvas, hiddenCanvas, scene, numRaysPerFrame) {
     this.tempBuffer = null;
     this.finalBuffer = null;
     this.backgroundBuffer = null;
+
+    this.strokeStyle = "rgba(255, 255, 255, 0.2)";
+    this.fillStyle = "rgba(100, 100, 100, 0.1)";
+    // this.fillStyle = "rgba(0, 0, 0, 0)";
     this.init();
 };
 Renderer.prototype.init = function() {
@@ -43,7 +48,7 @@ Renderer.prototype.drawBackground = function() {
     var imageData = c.getImageData(0, 0, this.w, this.h).data;
     this.tempBuffer = new Float32Array(imageData.length);
     for (var i = 0; i < this.scene.objects.length; i++) {
-        this.scene.objects[i].render(c, this.w, this.h);
+        this.scene.objects[i].render(c, this.w, this.h, this.strokeStyle, this.fillStyle);
     }
     this.backgroundBuffer = c.getImageData(0, 0, this.w, this.h).data.slice(0);
 };
@@ -54,7 +59,7 @@ Renderer.prototype.renderFrame = function() {
 
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, w, h);
-    scene.addLightRays(this.numRaysPerFrame);
+    scene.addLightRays(this.numRaysPerFrame, this.numBounces);
 
     for (var i = 0; i < this.numRaysPerFrame; i++) {
         var ray = scene.lightRaysToRender[i];

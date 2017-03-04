@@ -34,7 +34,7 @@ LightSource.prototype.getLightRay = function() {
     var theta = 2 * Math.PI * Math.random();
     // var theta = -2.4 + 0.0003 * Math.PI * Math.random();
     // var theta = -0.2 + 0.06 * Math.PI * Math.random();
-    // var theta = 0.6 + 0.03 * Math.PI * Math.random();
+    // var theta = 0.9 + 0.03 * Math.PI * Math.random();
     var wavelength = Math.random() * (700 - 400) + 400;
     return new LightRay(this.posx, this.posy, theta, wavelength);
 };

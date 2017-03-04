@@ -1,14 +1,15 @@
 
+
+
 var Scene = function() {
     this.objects = [];
-    this.numBounces = 5;
     this.lightSource = null;
     this.lightRaysToRender = [];
 
-    this.objects.push(new Line(0, 0, 1, 0, 0, 0));
-    this.objects.push(new Line(0, 0, 0, 1, 0, 0));
-    this.objects.push(new Line(0, 1, 1, 1, 0, 0));
-    this.objects.push(new Line(1, 0, 1, 1, 0, 0));
+    this.objects.push(new Line(0, 0, 1, 0, 1, 0, 0));
+    this.objects.push(new Line(0, 0, 0, 1, 1, 0, 0));
+    this.objects.push(new Line(0, 1, 1, 1, 1, 0, 0));
+    this.objects.push(new Line(1, 0, 1, 1, 1, 0, 0));
 };
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
@@ -16,15 +17,15 @@ Scene.prototype.addObject = function(obj) {
 Scene.prototype.setLightSource = function (lightSource) {
     this.lightSource = lightSource;
 };
-Scene.prototype.addLightRays = function(num) {
+Scene.prototype.addLightRays = function(num, numBounces) {
     for (var i = 0; i < num; i++) {
-        this.addLightRay();
+        this.addLightRay(numBounces);
     }
 };
-Scene.prototype.addLightRay = function () {
+Scene.prototype.addLightRay = function (numBounces) {
     var ray = this.lightSource.getLightRay();
 
-    for (var i = 0; i < this.numBounces; i++) {
+    for (var i = 0; i < numBounces; i++) {
         var intersections = [];
         var distances = [];
         for (var j = 0; j < this.objects.length; j++) {
@@ -50,7 +51,10 @@ Scene.prototype.addLightRay = function () {
     this.lightRaysToRender.push(ray);
 };
 
-var Line = function(startx, starty, endx, endy, reflectivity, roughness) {
+
+
+
+var Line = function(startx, starty, endx, endy, absorption, reflectivity, roughness) {
     this.startx = startx;
     this.starty = starty;
     this.endx = endx;
@@ -65,6 +69,7 @@ var Line = function(startx, starty, endx, endy, reflectivity, roughness) {
     this.dx = this.endx - this.startx;
     this.dy = this.endy - this.starty;
     this.normal = Math.atan2(this.dy, this.dx) + 0.5 * Math.PI;
+    this.absorption = absorption;
     this.reflectivity = reflectivity;
     this.roughness = roughness;
 };
@@ -91,26 +96,29 @@ Line.prototype.intersect = function(ray) {
     var intersectx = ray.posx + dist_ray * ray.dx;
     var intersecty = ray.posy + dist_ray * ray.dy;
 
-    var result = get_angle_permeable(ray, this.normal, 1 - this.reflectivity, null, this.roughness);
+    var result = get_angle_permeable(ray, this.normal, this.absorption, this.reflectivity, null, this.roughness);
     return [dist_ray, intersectx, intersecty, result[0], result[1], result[2]];
 
 };
-Line.prototype.render = function(c, w, h) {
+Line.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.lineWidth = 2;
-    c.strokeStyle = "rgba(255, 255, 255, 0.4)";
+    c.strokeStyle = strokeStyle;
     c.beginPath();
     c.moveTo(w * this.startx, h * this.starty);
     c.lineTo(w * this.endx, h * this.endy);
     c.stroke();
 };
 
-var Box = function(startx, starty, width, height, theta, refractive) {
+var Box = function(startx, starty, width, height, theta, absorption, reflectivity, refractive, roughness) {
     this.startx = startx;
     this.starty = starty;
     this.width = width;
     this.height = height;
     this.theta = theta;
+    this.absorption = absorption;
+    this.reflectivity = reflectivity;
     this.refractive = refractive;
+    this.roughness = roughness;
 
     var gamma = theta + 0.5 * Math.PI;
     this.p2x = startx + height * Math.cos(gamma);
@@ -127,9 +135,9 @@ var Box = function(startx, starty, width, height, theta, refractive) {
     this.lines.push(new Line(this.p3x, this.p3y, this.p4x, this.p4y, 1.0, 0.0));
 
 };
-Box.prototype.render = function(c, w, h) {
-    c.fillStyle = "rgba(255, 255, 255, 0.2)";
-    c.strokeStyle = "rgba(255, 255, 255, 0.5)";
+Box.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
+    c.fillStyle = fillStyle;
+    c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;
     c.beginPath();
     c.moveTo(w * this.startx, h * this.starty);
@@ -143,7 +151,7 @@ Box.prototype.render = function(c, w, h) {
 Box.prototype.intersect = function(ray) {
     var intersections = [];
     var distances = [];
-    var normals = []
+    var normals = [];
     for (var j = 0; j < this.lines.length; j++) {
         var intersection = this.lines[j].intersect(ray);
         if (intersection != null) {
@@ -158,24 +166,27 @@ Box.prototype.intersect = function(ray) {
     var close = intersections[vec_imin(distances)];
     var normal = normals[vec_imin(distances)];
 
-    var result = get_angle_permeable(ray, normal, 0, this.refractive, 0);
+    var result = get_angle_permeable(ray, normal, this.absorption, this.reflectivity, this.refractive, this.roughness);
     close[3] = result[0];
     close[4] = result[1];
     close[5] = result[2];
     return close;
 };
 
-var Cylinder = function(posx, posy, radius, refractive) {
+var Cylinder = function(posx, posy, radius, absorption, reflectivity, refractive, roughness) {
     this.posx = posx;
     this.posy = posy;
     this.radius = radius;
+    this.absorption = absorption;
     this.refractive = refractive;
+    this.reflectivity = reflectivity;
+    this.roughness = roughness;
 };
-Cylinder.prototype.render = function(c, w, h) {
+Cylinder.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.beginPath();
     c.arc(this.posx * w, this.posy * h, this.radius * w, 0, 2 * Math.PI, false);
-    c.fillStyle = "rgba(255, 255, 255, 0.2)";
-    c.strokeStyle = "rgba(255, 255, 255, 0.5)";
+    c.fillStyle = fillStyle;
+    c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;
     c.fill();
     c.stroke();
@@ -217,7 +228,7 @@ Cylinder.prototype.intersect = function(ray) {
     var dirx = intersectx - this.posx;
     var diry = intersecty - this.posy;
     var theta = Math.atan2(diry, dirx);
-    var result = get_angle_permeable(ray, theta, 0, this.refractive, 0);
+    var result = get_angle_permeable(ray, theta, this.absorption, this.reflectivity, this.refractive, this.roughness);
     return [dist_ray, intersectx, intersecty, result[0], result[1], result[2]];
 
 

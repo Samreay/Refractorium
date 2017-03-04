@@ -147,38 +147,42 @@ function get_angle_incidence(incoming, normal) {
     return Math.abs(a1) < Math.abs(a2) ? [a1, normal] : [a2, normal + Math.PI];
 }
 
-function get_angle_permeable(ray, normal, absorb, refractive, roughness) {
-
-    var angles = get_angle_incidence(ray.theta, normal);
-    var angle_incidence = angles[0];
-    normal = angles[1];
-    var theta_out = normal + angle_incidence;
+function get_angle_permeable(ray, normal, absorb, reflectivity, refractive, roughness) {
+    var theta_out = ray.theta;
     var power = (1 - absorb);
     var inMaterial = false;
 
-    if (refractive != null) {
-        refractive = refractive + (ray.lambda - 400) / 3000;
-        if (ray.inMedium) {
-            var nratio = 1 / refractive;
-        } else {
-            var nratio = refractive; // Or 1/n if coming out
-        }
-        var r_0 = Math.pow((1 - refractive) / (refractive + 1), 2);
-        var reflectivity = r_0 + (1 - r_0) * Math.pow((1 - Math.cos(angle_incidence)), 5);
-        if (!(Math.abs(angle_incidence) > Math.asin(nratio)) && Math.random() < reflectivity) {
-            power *= reflectivity;
-        } else {
-            var new_angle = (Math.PI + normal) - Math.sign(angle_incidence) * Math.asin(Math.sin(Math.abs(angle_incidence)) / nratio);
-            if (!isNaN(new_angle)) {
-                // NaN means total internal reflection
-                theta_out = (4 * Math.PI + new_angle) % (2 * Math.PI);
-                power *= (1 - reflectivity);
-                inMaterial = true;
+    var reflected = Math.random() < reflectivity;
+    // If its a line and it isn't reflected, it keeps going, so don't calculate changes in angles.
+    if (refractive != null || !reflected) {
+
+        var angles = get_angle_incidence(ray.theta, normal);
+        var angle_incidence = angles[0];
+        normal = angles[1];
+        theta_out = normal + angle_incidence;
+
+        if (!reflected && refractive != null) {
+            refractive = refractive + (ray.lambda - 400) / 3000;
+            if (ray.inMedium) {
+                var nratio = 1 / refractive;
+            } else {
+                var nratio = refractive; // Or 1/n if coming out
+            }
+            var r_0 = Math.pow((1 - refractive) / (refractive + 1), 2);
+            var reflectivity = r_0 + (1 - r_0) * Math.pow((1 - Math.cos(angle_incidence)), 5);
+            if (!(Math.abs(angle_incidence) > Math.asin(nratio)) && Math.random() < reflectivity) {
+                power *= reflectivity;
+            } else {
+                var new_angle = (Math.PI + normal) - Math.sign(angle_incidence) * Math.asin(Math.sin(Math.abs(angle_incidence)) / nratio);
+                if (!isNaN(new_angle)) {
+                    // NaN means total internal reflection
+                    theta_out = (4 * Math.PI + new_angle) % (2 * Math.PI);
+                    power *= (1 - reflectivity);
+                    inMaterial = true;
+                    normal += Math.PI;
+                }
             }
         }
-    }
-    if (isNaN(theta_out)) {
-        console.log("But why")
     }
     if (roughness > 0) {
         theta_out = rand_deflection(theta_out, roughness, normal);
