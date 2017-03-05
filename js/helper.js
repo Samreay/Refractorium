@@ -189,3 +189,72 @@ function get_angle_permeable(ray, normal, absorb, reflectivity, refractive, roug
     }
     return [theta_out, power, inMaterial];
 }
+
+function sign(x) {
+    if (x < 0) {
+        return -1;
+    }
+    return 1;
+}
+
+function circleIntersect(ray, cx, cy, radius, minTheta, maxTheta) {
+    // Returns dist_ray, intersectx, intersecty, theta - or null
+    var dx = ray.dx;
+    var dy = ray.dy;
+    var dr2 = dx * dx + dy * dy;
+    var posx = ray.posx - cx;
+    var posy = ray.posy - cy;
+    var d = posx * (posy + dy) - (posx + dx) * posy;
+
+    var discriminant = radius * radius * dr2 - d * d;
+    if (discriminant <= 0) {
+        return null;
+    }
+    var sqrt_discriminant = Math.sqrt(discriminant);
+
+    var x1 = (d * dy + sign(dy) * dx * sqrt_discriminant) / (dr2);
+    var x2 = (d * dy - sign(dy) * dx * sqrt_discriminant) / (dr2);
+    var y1 = (-d * dx + Math.abs(dy) * sqrt_discriminant) / (dr2);
+    var y2 = (-d * dx - Math.abs(dy) * sqrt_discriminant) / (dr2);
+    var theta1 = (Math.atan2(y1, x1) + Math.PI * 2) % (Math.PI * 2);
+    var theta2 = (Math.atan2(y2, x2) + Math.PI * 2) % (Math.PI * 2);
+    var dist1 = (x1 + cx - ray.posx) / ray.dx;
+    var dist2 = (x2 + cx - ray.posx) / ray.dx;
+
+    if (minTheta != null) {
+        var diff = angle_diff(maxTheta, minTheta);
+        var diff1 = angle_diff(theta1, minTheta);
+        var diff2 = angle_diff(theta2, minTheta);
+        if (Math.abs(diff1) > Math.abs(diff) || sign(diff) != Math.sign(diff1)) {
+            dist1 = 0;
+        }
+        if (Math.abs(diff2) > Math.abs(diff) || sign(diff) != Math.sign(diff2)) {
+            dist2 = 0;
+        }
+    }
+    if (dist1 < 0.001 && dist2 < 0.001) {
+        return null;
+    }
+    if (dist1 < 0.001) {
+        dist1 = 9e9;
+    }
+    if (dist2 < 0.001) {
+        dist2 = 9e9;
+    }
+    var dist_ray, theta, intersectx, intersecty;
+    if (dist1 < dist2) {
+        dist_ray = dist1;
+        theta = theta1;
+        intersectx = x1 + cx;
+        intersecty = y1 + cy;
+
+    } else {
+        dist_ray = dist2;
+        theta = theta2;
+        intersectx = x2 + cx;
+        intersecty = y2 + cy;
+
+    }
+    return [dist_ray, intersectx, intersecty, theta]
+}
+

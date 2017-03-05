@@ -271,44 +271,63 @@ Cylinder.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.stroke();
 };
 Cylinder.prototype.intersect = function(ray) {
-    var dx = ray.dx;
-    var dy = ray.dy;
-    var dr2 = dx * dx + dy * dy;
-    var posx = ray.posx - this.posx;
-    var posy = ray.posy - this.posy;
-    var d = posx * (posy + dy) - (posx + dx) * posy;
-
-    var discriminant = this.radius * this.radius * dr2 - d * d;
-    if (discriminant <= 0) {
+    var intersects = circleIntersect(ray, this.posx, this.posy, this.radius, null, null);
+    if (intersects == null) {
         return null;
     }
-    var sqrt_discriminant = Math.sqrt(discriminant);
+    var result = get_angle_permeable(ray, intersects[3], this.absorption, this.reflectivity, this.refractive, this.roughness);
+    return [intersects[0], intersects[1], intersects[2], result[0], result[1], result[2]];
+};
 
-    var x1 = (d * dy + Math.sign(dy) * dx * sqrt_discriminant) / (dr2);
-    var x2 = (d * dy - Math.sign(dy) * dx * sqrt_discriminant) / (dr2);
-    var y1 = (-d * dx + Math.abs(dy) * sqrt_discriminant) / (dr2);
-    var y2 = (-d * dx - Math.abs(dy) * sqrt_discriminant) / (dr2);
 
-    var dist1 = (x1 + this.posx - ray.posx) / ray.dx;
-    var dist2 = (x2 + this.posx - ray.posx) / ray.dx;
-    if (dist1 < 0.001 && dist2 < 0.001) {
+
+
+var ConvexLens = function(posx, posy, height, theta, bulge, absorption, reflectivity, refractive, roughness) {
+    this.posx = posx;
+    this.posy = posy;
+    this.height = height;
+    this.theta = theta;
+    this.bulge = bulge;
+
+    this.absorption = absorption;
+    this.reflectivity = reflectivity;
+    this.refractive = refractive;
+    this.roughness = roughness;
+
+    this.offset = 0.5 * height / Math.tan(bulge);
+    this.radius = 0.5 * height / Math.sin(bulge);
+    this.c1x = this.posx + this.offset * Math.cos(theta);
+    this.c2x = this.posx - this.offset * Math.cos(theta);
+    this.c1y = this.posy + this.offset * Math.sin(theta);
+    this.c2y = this.posy - this.offset * Math.sin(theta);
+};
+ConvexLens.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
+    c.beginPath();
+    c.arc(this.c1x * h, this.c1y * h, this.radius * h,  this.theta + Math.PI + this.bulge,  this.theta + Math.PI - this.bulge, true);
+    c.arc(this.c2x * h, this.c2y * h, this.radius * h, this.theta + this.bulge, this.theta - this.bulge, true);
+    c.fillStyle = fillStyle;
+    c.strokeStyle = strokeStyle;
+    c.lineWidth = 0.5;
+    c.fill();
+    c.stroke();
+};
+ConvexLens.prototype.intersect = function(ray) {
+    var intersect1 = circleIntersect(ray, this.c1x, this.c1y, this.radius, this.theta + Math.PI - this.bulge, this.theta + Math.PI + this.bulge);
+    var intersect2 = circleIntersect(ray, this.c2x, this.c2y, this.radius, this.theta - this.bulge, this.theta + this.bulge);
+    var intersects;
+    if (intersect1 == null && intersect2 == null) {
         return null;
+    } else if (intersect1 == null) {
+        intersects = intersect2;
+    } else if (intersect2 == null) {
+        intersects = intersect1;
+    } else {
+        if (intersect1[0] < intersect2[0]) {
+            intersects = intersect1;
+        } else {
+            intersects = intersect2;
+        }
     }
-    if (dist1 < 0.001) {
-        dist1 = 9e9;
-    }
-    if (dist2 < 0.001) {
-        dist2 = 9e9;
-    }
-    var dist_ray = Math.min(dist1, dist2);
-    var intersectx = dist1 < dist2 ? x1 + this.posx : x2 + this.posx;
-    var intersecty = dist1 < dist2 ? y1 + this.posy : y2 + this.posy;
-
-    var dirx = intersectx - this.posx;
-    var diry = intersecty - this.posy;
-    var theta = Math.atan2(diry, dirx);
-    var result = get_angle_permeable(ray, theta, this.absorption, this.reflectivity, this.refractive, this.roughness);
-    return [dist_ray, intersectx, intersecty, result[0], result[1], result[2]];
-
-
+    var result = get_angle_permeable(ray, intersects[3], this.absorption, this.reflectivity, this.refractive, this.roughness);
+    return [intersects[0], intersects[1], intersects[2], result[0], result[1], result[2]];
 };
