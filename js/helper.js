@@ -25,7 +25,7 @@ function vec_add(a, b) {
     }
 }
 
-function vec_normalise(a, b) {
+function vec_normalise(a, b, boost) {
     var max = -9e9;
     for (var i = 0; i < a.length; i++) {
         if (i % 4 != 0 && a[i] > max) {
@@ -33,7 +33,7 @@ function vec_normalise(a, b) {
         }
     }
     for (var i = 0; i < a.length; i++) {
-        b[i] = Math.min(255, 3 * 255 * a[i] / max);
+        b[i] = Math.min(255, boost * 255 * a[i] / max);
     }
     return b;
 }

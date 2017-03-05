@@ -1,5 +1,8 @@
 var width = 1080, height = 720;
 
+// width *= 1.5;
+// height *= 1.5;
+
 var canvasDiv = document.getElementById("canvases");
 var canvas = document.createElement("canvas");
 canvas.setAttribute("id", "mainCanvas");
@@ -59,5 +62,5 @@ canvas.addEventListener("dblclick", switchPlots, false);
 canvas2.addEventListener("dblclick", switchPlots, false);
 
 
-window.setInterval(renderer.render.bind(renderer), 100);
+window.setInterval(renderer.render.bind(renderer), 200);
 

@@ -87,7 +87,8 @@ Renderer.prototype.render = function() {
     var frameBuffer = this.renderFrame();
     if (this.showFinal) {
         vec_add(this.tempBuffer, frameBuffer);
-        vec_normalise_channels(this.tempBuffer, this.finalBuffer);
+        // vec_normalise_channels(this.tempBuffer, this.finalBuffer);
+        vec_normalise(this.tempBuffer, this.finalBuffer, 3);
         vec_add(this.finalBuffer, this.backgroundBuffer);
         vec_clip(this.finalBuffer, image.data);
     } else {

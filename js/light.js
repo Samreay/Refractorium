@@ -101,7 +101,7 @@ var LaserSource = function(brightness, posx, posy, theta) {
 LaserSource.prototype.getLightRays = function(num) {
     var rays = [];
     for (var i = 0; i < num; i++) {
-        var wavelength = Math.random() * (670 - 400) + 400;
+        var wavelength = Math.random() * (780 - 350) + 350;
         var ray = new LightRay(this.posx, this.posy, this.theta, wavelength);
         rays.push(ray);
 
@@ -113,27 +113,29 @@ nmToRGB = function (wavelength) {
     var Gamma = 0.90,
         IntensityMax = 255,
         factor, red, green, blue;
-    if ((wavelength >= 380) && (wavelength < 440)) {
-        red = -(wavelength - 440) / (440 - 380);
+
+    var t1 = 350, t2 = 440, t3 = 490, t4 = 510, t5 = 580, t6 = 645, t7 = 781;
+    if ((wavelength >= t1) && (wavelength < t2)) {
+        red = -(wavelength - t2) / (t2 - t1);
         green = 0.0;
         blue = 1.0;
-    } else if ((wavelength >= 440) && (wavelength < 490)) {
+    } else if ((wavelength >= t2) && (wavelength < t3)) {
         red = 0.0;
-        green = (wavelength - 440) / (490 - 440);
+        green = (wavelength - t2) / (t3 - t2);
         blue = 1.0;
-    } else if ((wavelength >= 490) && (wavelength < 510)) {
+    } else if ((wavelength >= t3) && (wavelength < t4)) {
         red = 0.0;
         green = 1.0;
-        blue = -(wavelength - 510) / (510 - 490);
-    } else if ((wavelength >= 510) && (wavelength < 580)) {
-        red = (wavelength - 510) / (580 - 510);
+        blue = -(wavelength - t4) / (t4 - t3);
+    } else if ((wavelength >= t4) && (wavelength < t5)) {
+        red = (wavelength - t4) / (t5 - t4);
         green = 1.0;
         blue = 0.0;
-    } else if ((wavelength >= 580) && (wavelength < 645)) {
+    } else if ((wavelength >= t5) && (wavelength < t6)) {
         red = 1.0;
-        green = -(wavelength - 645) / (645 - 580);
+        green = -(wavelength - t6) / (t6 - t5);
         blue = 0.0;
-    } else if ((wavelength >= 645) && (wavelength < 781)) {
+    } else if ((wavelength >= t6) && (wavelength < t7)) {
         red = 1.0;
         green = 0.0;
         blue = 0.0;
