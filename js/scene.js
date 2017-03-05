@@ -67,26 +67,25 @@ Scene.prototype.simulateLightRay = function (ray, numBounces) {
 };
 
 
-var Line = function(startx, starty, endx, endy, absorption, reflectivity, roughness) {
-    this.startx = startx;
-    this.starty = starty;
-    this.endx = endx;
-    this.endy = endy;
-    if ((this.endx - this.startx) == 0) {
-        this.grad = Math.POSITIVE_INFINITY;
-        this.theta = Math.PI / 2;
-    } else {
-        this.grad = (this.endy - this.starty) / (this.endx - this.startx);
-        this.theta = Math.atan(this.grad)
-    }
-    this.dx = this.endx - this.startx;
-    this.dy = this.endy - this.starty;
-    this.normal = Math.atan2(this.dy, this.dx) + 0.5 * Math.PI;
+var Line = function(posx, posy, theta, height, absorption, reflectivity, roughness) {
+    this.posx = posx;
+    this.posy = posy;
+    this.theta = theta;
+    this.height = height;
     this.absorption = absorption;
     this.reflectivity = reflectivity;
     this.roughness = roughness;
+    this.init();
 };
-
+Line.prototype.init = function() {
+    this.startx = this.posx - 0.5 * this.height * Math.cos(this.theta);
+    this.starty = this.posy - 0.5 * this.height * Math.sin(this.theta);
+    this.endx = this.posx + 0.5 * this.height * Math.cos(this.theta);
+    this.endy = this.posy + 0.5 * this.height * Math.sin(this.theta);
+    this.dx = this.endx - this.startx;
+    this.dy = this.endy - this.starty;
+    this.normal = this.theta + 0.5 * Math.PI;
+};
 Line.prototype.intersect = function(ray) {
     if (ray.theta == this.theta || ray.theta + Math.PI == this.theta || ray.theta == this.theta + Math.PI) {
         return null;
@@ -140,9 +139,9 @@ Line.prototype.getName = function() {
 
 
 
-var Box = function(startx, starty, width, height, theta, absorption, reflectivity, refractive, roughness) {
-    this.startx = startx;
-    this.starty = starty;
+var Box = function(posx, posy, width, height, theta, absorption, reflectivity, refractive, roughness) {
+    this.posx = posx;
+    this.posy = posy;
     this.width = width;
     this.height = height;
     this.theta = theta;
@@ -151,19 +150,24 @@ var Box = function(startx, starty, width, height, theta, absorption, reflectivit
     this.refractive = refractive;
     this.roughness = roughness;
 
-    var gamma = theta + 0.5 * Math.PI;
-    this.p2x = startx + height * Math.cos(gamma);
-    this.p2y = starty + height * Math.sin(gamma);
-    this.p3x = startx + width * Math.cos(theta);
-    this.p3y = starty + width * Math.sin(theta);
-    this.p4x = this.p3x + height * Math.cos(gamma);
-    this.p4y = this.p3y + height * Math.sin(gamma);
+    this.init();
+};
+Box.prototype.init = function() {
+    var gamma = this.theta + 0.5 * Math.PI;
+    this.p1x = this.posx + 0.5 * (-this.width * Math.cos(this.theta) + this.height * Math.cos(gamma));
+    this.p1y = this.posy + 0.5 * (this.width * Math.sin(this.theta) - this.height * Math.sin(gamma));
+    this.p2x = this.posx + 0.5 * (this.width * Math.cos(this.theta) + this.height * Math.cos(gamma));
+    this.p2y = this.posy + 0.5 * (-this.width * Math.sin(this.theta) - this.height * Math.sin(gamma));
+    this.p3x = this.posx + 0.5 * (this.width * Math.cos(this.theta) - this.height * Math.cos(gamma));
+    this.p3y = this.posy - 0.5 * (this.width * Math.sin(this.theta) - this.height * Math.sin(gamma));
+    this.p4x = this.posx - 0.5 * (this.width * Math.cos(this.theta) + this.height * Math.cos(gamma));
+    this.p4y = this.posy + 0.5 * (this.width * Math.sin(this.theta) + this.height * Math.sin(gamma));
 
     this.lines = [];
-    this.lines.push(new Line(startx, starty, this.p2x, this.p2y, 0.0, 1.0, 0.0));
-    this.lines.push(new Line(startx, starty, this.p3x, this.p3y, 0.0, 1.0, 0.0));
-    this.lines.push(new Line(this.p2x, this.p2y, this.p4x, this.p4y, 0.0, 1.0, 0.0));
-    this.lines.push(new Line(this.p3x, this.p3y, this.p4x, this.p4y, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.posx - this.width * 0.5 * Math.cos(this.theta), this.posy + this.width * 0.5 * Math.sin(this.theta), -gamma, this.height, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.posx + this.width * 0.5 * Math.cos(this.theta), this.posy - this.width * 0.5 * Math.sin(this.theta), -gamma, this.height, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.posx + this.height * 0.5 * Math.cos(gamma), this.posy - this.height * 0.5 * Math.sin(gamma), -this.theta, this.width, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.posx - this.height * 0.5 * Math.cos(gamma), this.posy + this.height * 0.5 * Math.sin(gamma), -this.theta, this.width, 0.0, 1.0, 0.0));
 
 };
 Box.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
@@ -171,11 +175,11 @@ Box.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;
     c.beginPath();
-    c.moveTo(h * this.startx, h * this.starty);
+    c.moveTo(h * this.p1x, h * this.p1y);
     c.lineTo(h * this.p2x, h * this.p2y);
-    c.lineTo(h * this.p4x, h * this.p4y);
     c.lineTo(h * this.p3x, h * this.p3y);
-    c.lineTo(h * this.startx, h * this.starty);
+    c.lineTo(h * this.p4x, h * this.p4y);
+    c.lineTo(h * this.p1x, h * this.p1y);
     c.fill();
     c.stroke()
 };
@@ -204,44 +208,55 @@ Box.prototype.intersect = function(ray) {
     return close;
 };
 Box.prototype.getName = function() {
-    return "Box at (" + this.startx.toFixed(2) + ", " + this.starty.toFixed(2) + ")";
+    return "Box at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
 
 
 
-var Prism = function(startx, starty, width, height, theta, absorption, reflectivity, refractive, roughness) {
-    this.startx = startx;
-    this.starty = starty;
-    this.width = width;
-    this.height = height;
+var Prism = function(posx, posy, radius, theta, absorption, reflectivity, refractive, roughness) {
+    this.posx = posx;
+    this.posy = posy;
+    this.radius = radius;
     this.theta = theta;
     this.absorption = absorption;
     this.reflectivity = reflectivity;
     this.refractive = refractive;
     this.roughness = roughness;
+    this.init();
+};
+Prism.prototype.init = function() {
 
-    var gamma = theta + 0.5 * Math.PI;
-    this.p2x = startx + width * Math.cos(theta);
-    this.p2y = starty + width * Math.sin(theta);
-    this.p3x = startx + 0.5 * width * Math.cos(theta) + height * Math.cos(gamma);
-    this.p3y = starty + 0.5 * width * Math.sin(theta) + height * Math.sin(gamma);
+    var r2 = this.radius * Math.sin(Math.PI / 6);
+    var length = 2 * this.radius * Math.cos(Math.PI / 6);
 
+    this.c1x = this.posx + r2 * Math.cos(this.theta);
+    this.c1y = this.posy + r2 * Math.sin(this.theta);
+    this.c2x = this.posx + r2 * Math.cos(this.theta + Math.PI * 2 / 3);
+    this.c2y = this.posy + r2 * Math.sin(this.theta + Math.PI * 2 / 3);
+    this.c3x = this.posx + r2 * Math.cos(this.theta + Math.PI * 4 / 3);
+    this.c3y = this.posy + r2 * Math.sin(this.theta + Math.PI * 4 / 3);
 
     this.lines = [];
-    this.lines.push(new Line(startx, starty, this.p2x, this.p2y, 0.0, 1.0, 0.0));
-    this.lines.push(new Line(startx, starty, this.p3x, this.p3y, 0.0, 1.0, 0.0));
-    this.lines.push(new Line(this.p2x, this.p2y, this.p3x, this.p3y, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.c1x, this.c1y, Math.PI * 0.5 + this.theta, length, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.c2x, this.c2y, Math.PI * 0.5 + this.theta + Math.PI * 2 / 3, length, 0.0, 1.0, 0.0));
+    this.lines.push(new Line(this.c3x, this.c3y, Math.PI * 0.5 + this.theta + Math.PI * 4 / 3, length, 0.0, 1.0, 0.0));
 
+    this.p1x = this.lines[0].startx;
+    this.p1y = this.lines[0].starty;
+    this.p2x = this.lines[1].startx;
+    this.p2y = this.lines[1].starty;
+    this.p3x = this.lines[2].startx;
+    this.p3y = this.lines[2].starty;
 };
 Prism.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.fillStyle = fillStyle;
     c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;
     c.beginPath();
-    c.moveTo(h * this.startx, h * this.starty);
+    c.moveTo(h * this.p1x, h * this.p1y);
     c.lineTo(h * this.p2x, h * this.p2y);
     c.lineTo(h * this.p3x, h * this.p3y);
-    c.lineTo(h * this.startx, h * this.starty);
+    c.lineTo(h * this.p1x, h * this.p1y);
     c.fill();
     c.stroke()
 };
@@ -270,7 +285,7 @@ Prism.prototype.intersect = function(ray) {
     return close;
 };
 Prism.prototype.getName = function() {
-    return "Prism at (" + this.startx.toFixed(2) + ", " + this.starty.toFixed(2) + ")";
+    return "Prism at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
 
 

@@ -1,5 +1,4 @@
-angular.module('servicesZ', [])
-    .service("scenesService", [function() {
+angular.module('servicesZ', []).service("scenesService", [function () {
     var self = this;
 
     var aspect = 1.5;
@@ -7,6 +6,16 @@ angular.module('servicesZ', [])
     var scenes = [];
 
     var scene = new Scene(aspect);
+    scene.addObject(new PointSource(1.0, 0.75, 0.5));
+    scene.addObject(new Prism(0.4, 0.5, 0.1, 0.3, 0.0, 0.0, 1.7, 0.0));
+    scenes.push({"name": "Box", "scene": scene});
+
+    scene = new Scene(aspect);
+    scene.addObject(new PointSource(1.0, 0.75, 0.5));
+    scene.addObject(new Box(0.75, 0.5, 0.3, 0.3, 0.2, 0.0, 0.0, 1.7, 0.0));
+    scenes.push({"name": "Box", "scene": scene});
+
+    scene = new Scene(aspect);
     scene.addObject(new PointSource(1.0, 0.8, 0.3));
     scene.addObject(new ConeSource(0.2, 1.2, 0.01, 2.62 / (2 * Math.PI), 0.0003));
     scene.addObject(new Line(0.1, 0.83, 0.30, 0.99, 0.0, 1.0, 0.0));
@@ -27,7 +36,7 @@ angular.module('servicesZ', [])
     scene.addObject(new ConvexLens(0.7, 0.5, 0.2, 0, 0.6, 0, 0, 1.5, 0));
     scenes.push({"name": "Simple", "scene": scene});
 
-    self.getScenes = function() {
+    self.getScenes = function () {
         return scenes;
     }
 }]);
