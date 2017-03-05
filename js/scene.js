@@ -8,10 +8,10 @@ var Scene = function(aspect) {
     this.aspect = aspect;
 
     this.totalBrightness = 0;
-    this.objects.push(new Line(0, 0, aspect, 0, 1, 0, 0));
-    this.objects.push(new Line(0, 0, 0, aspect, 1, 0, 0));
-    this.objects.push(new Line(0, 1, aspect, 1, 1, 0, 0));
-    this.objects.push(new Line(aspect, 0, aspect, 1, 1, 0, 0));
+    // this.objects.push(new Line(0, 0, aspect, 0, 1, 0, 0));
+    // this.objects.push(new Line(0, 0, 0, aspect, 1, 0, 0));
+    // this.objects.push(new Line(0, 1, aspect, 1, 1, 0, 0));
+    // this.objects.push(new Line(aspect, 0, aspect, 1, 1, 0, 0));
 };
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
@@ -53,8 +53,7 @@ Scene.prototype.simulateLightRay = function (ray, numBounces) {
         }
 
         if (distances.length == 0) {
-            console.error("NO COLLISION");
-            ray.change_direction(ray.posx + ray.dx, ray.posy + ray.dy, 0, 0, 0);
+            ray.change_direction(ray.posx + 10 * ray.dx, ray.posy + 10 * ray.dy, 0, 0, 0);
         } else {
             var close = intersections[vec_imin(distances)];
             ray.change_direction(close[1], close[2], close[3], close[4], close[5]);
@@ -130,6 +129,9 @@ Line.prototype.getName = function() {
         } else {
             type = "Wall"
         }
+    }
+    if (this.absorption > 0.99) {
+        type = "Wall";
     }
     return type + " at (" + this.startx.toFixed(2) + ", " + this.starty.toFixed(2) + ")";
 };
