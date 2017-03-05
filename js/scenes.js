@@ -15,7 +15,8 @@ angular.module('servicesZ', []).service("scenesService", [function () {
     scene.addObject(new Cylinder(0.7, 0.58, 0.1, 0.0, 0.0, 1.5, 0.0));
 
     scene.addObject(new Line(0.32, 0.63, 2.15, 0.05, 0.0, 0.1, 0.0));
-    scene.addObject(new Line(0.32, 0.63, 2.15, 0.05, 0.0, 0.1, 0.0));
+    scene.addObject(new Line(1.3, 0.4,  -0.8, 0.55, 0.0, 1, 0.01));
+    scene.addObject(new Line(1.48, 0.63,  Math.PI/2, 0.5, 0.0, 1, 1));
 
     // scene.addObject(new Line(1.3, 0.20, 1.0, 0.60, 0.0, 1.0, 1.0));
     // scene.addObject(new Line(1.4, 0.20, 1.4, 0.80, 0.0, 1.0, 1.0));
