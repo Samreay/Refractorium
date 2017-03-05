@@ -7,7 +7,6 @@ var Scene = function(aspect) {
     this.lightRaysToRender = [];
     this.aspect = aspect;
 
-    this.totalBrightness = 0;
     // this.objects.push(new Line(0, 0, aspect, 0, 1, 0, 0));
     // this.objects.push(new Line(0, 0, 0, aspect, 1, 0, 0));
     // this.objects.push(new Line(0, 1, aspect, 1, 1, 0, 0));
@@ -15,18 +14,17 @@ var Scene = function(aspect) {
 };
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
-    if (obj.brightness != undefined) {
-        this.totalBrightness += obj.brightness;
-    }
 };
 Scene.prototype.addLightRays = function(num, numBounces) {
     var lightSources = [];
+    var totalBrightness = 0;
     for (var i = 0; i < this.objects.length; i++) {
         if (this.objects[i].brightness != undefined) {
             lightSources.push(this.objects[i]);
+            totalBrightness += this.objects[i].brightness;
         }
     }
-    var raysPerBrightness = num / this.totalBrightness;
+    var raysPerBrightness = num / totalBrightness;
     var rays = [];
     for (var j = 0; j < lightSources.length; j++) {
         var source = lightSources[j];
@@ -326,12 +324,12 @@ Cylinder.prototype.getName = function() {
 
 
 
-var ConvexLens = function(posx, posy, height, theta, bulge, absorption, reflectivity, refractive, roughness) {
+var ConvexLens = function(posx, posy, height, theta, arc, absorption, reflectivity, refractive, roughness) {
     this.posx = posx;
     this.posy = posy;
     this.height = height;
     this.theta = theta;
-    this.bulge = bulge;
+    this.arc = arc;
 
     this.absorption = absorption;
     this.reflectivity = reflectivity;
@@ -341,8 +339,8 @@ var ConvexLens = function(posx, posy, height, theta, bulge, absorption, reflecti
     this.init();
 };
 ConvexLens.prototype.init = function() {
-    this.offset = 0.5 * this.height / Math.tan(this.bulge);
-    this.radius = 0.5 * this.height / Math.sin(this.bulge);
+    this.offset = 0.5 * this.height / Math.tan(this.arc);
+    this.radius = 0.5 * this.height / Math.sin(this.arc);
     this.c1x = this.posx + this.offset * Math.cos(this.theta);
     this.c2x = this.posx - this.offset * Math.cos(this.theta);
     this.c1y = this.posy + this.offset * Math.sin(this.theta);
@@ -350,8 +348,8 @@ ConvexLens.prototype.init = function() {
 };
 ConvexLens.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.beginPath();
-    c.arc(this.c1x * h, this.c1y * h, this.radius * h,  this.theta + Math.PI + this.bulge,  this.theta + Math.PI - this.bulge, true);
-    c.arc(this.c2x * h, this.c2y * h, this.radius * h, this.theta + this.bulge, this.theta - this.bulge, true);
+    c.arc(this.c1x * h, this.c1y * h, this.radius * h,  this.theta + Math.PI + this.arc,  this.theta + Math.PI - this.arc, true);
+    c.arc(this.c2x * h, this.c2y * h, this.radius * h, this.theta + this.arc, this.theta - this.arc, true);
     c.fillStyle = fillStyle;
     c.strokeStyle = strokeStyle;
     c.lineWidth = 0.5;
@@ -359,8 +357,8 @@ ConvexLens.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.stroke();
 };
 ConvexLens.prototype.intersect = function(ray) {
-    var intersect1 = circleIntersect(ray, this.c1x, this.c1y, this.radius, this.theta + Math.PI - this.bulge, this.theta + Math.PI + this.bulge);
-    var intersect2 = circleIntersect(ray, this.c2x, this.c2y, this.radius, this.theta - this.bulge, this.theta + this.bulge);
+    var intersect1 = circleIntersect(ray, this.c1x, this.c1y, this.radius, this.theta + Math.PI - this.arc, this.theta + Math.PI + this.arc);
+    var intersect2 = circleIntersect(ray, this.c2x, this.c2y, this.radius, this.theta - this.arc, this.theta + this.arc);
     var intersects;
     if (intersect1 == null && intersect2 == null) {
         return null;

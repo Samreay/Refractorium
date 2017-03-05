@@ -5,20 +5,37 @@ angular.module('refractorium', ['servicesZ'])
     .controller('MainController', ['scenesService', function(scenesService) {
         var self = this;
 
+        self.width = 1080;
+        self.height = 720;
+
+        var canvas = document.getElementById("mainCanvas");
+        var canvas2 = document.getElementById("hiddenCanvas");
+
+        self.renderer = new Renderer(self.width, self.height, canvas, canvas2, 500, 19);
+
+        self.switchPlots = function() {
+            self.renderer.showFinal = !self.renderer.showFinal;
+        };
+
+        angular.element(document).ready(function () {
+            self.renderer.init();
+            window.setInterval(self.renderer.render.bind(self.renderer), 200);
+
+        });
+
         self.scenes = scenesService.getScenes();
         self.selectedObject = null;
         self.selectedObjectProperties = [];
-        var aspect = 1.5;
 
         self.selectScene = function(scene) {
-            renderer.setScene(scene.scene);
+            self.renderer.setScene(scene.scene);
         };
 
         self.getSceneObjects = function() {
-            return renderer.scene.objects;
+            return self.renderer.scene.objects;
         };
         self.getSceneLights = function() {
-            return renderer.scene.lightSources;
+            return self.renderer.scene.lightSources;
         };
 
         self.selectObject = function(object) {
@@ -30,6 +47,9 @@ angular.module('refractorium', ['servicesZ'])
             var o = self.selectedObject;
             if (o == null) {
                 return;
+            }
+            if (o.brightness != undefined) {
+                self.selectedObjectProperties.push({key: "brightness", label: "Brightness", value: o.brightness, minv: 0, maxv: 2})
             }
             if (o.posx != undefined) {
                 self.selectedObjectProperties.push({key: "posx", label: "Position x", value: o.posx, minv: 0, maxv: 1.5})
@@ -48,6 +68,9 @@ angular.module('refractorium', ['servicesZ'])
             }
             if (o.radius != undefined) {
                 self.selectedObjectProperties.push({key: "radius", label: "Radius", value: o.radius, minv: 0, maxv: 1})
+            }
+            if (o.arc != undefined) {
+                self.selectedObjectProperties.push({key: "arc", label: "Arc", value: o.arc, minv: 0, maxv: Math.PI / 2})
             }
             if (o.absorption != undefined) {
                 self.selectedObjectProperties.push({key: "absorption", label: "Absorption", value: o.absorption, minv: 0, maxv: 1})
@@ -70,7 +93,7 @@ angular.module('refractorium', ['servicesZ'])
             if (self.selectedObject.init != undefined) {
                 self.selectedObject.init();
             }
-            renderer.init();
+            self.renderer.init();
         };
 
         self.selectScene(self.scenes[0]);

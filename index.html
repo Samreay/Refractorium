@@ -13,13 +13,17 @@
 <body ng-controller="MainController as ctrl">
     <div class="container">
         <div id="canvases">
-            <canvas id="mainCanvas" width="1080" height="720"></canvas>
-            <canvas id="hiddenCanvas" width="1080" height="720" style="display: none"></canvas>
+            <canvas id="mainCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-dblclick="ctrl.switchPlots()"></canvas>
+            <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}"  ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
         </div>
 
 
         <div class="row">
             <div id="scenes" class="col-lg-4">
+                <label for="NumRayPerFrame">Rays Per Frame:</label>
+                <input id="NumRayPerFrame" type="range" min="50" max="1000" step="1" ng-model="ctrl.renderer.numRaysPerFrame" ng-change="ctrl.renderer.init()">
+                <label for="NumBounces">Number of Light Bounces:</label>
+                <input id="NumBounces" type="range" min="2" max="20" step="1" ng-model="ctrl.renderer.numBounces" ng-change="ctrl.renderer.init()">
                 <h2>Scenes</h2>
                 <div class="row" ng-repeat="scene in ctrl.scenes">
                     <p ng-click="ctrl.selectScene(scene)">{{scene.name}}</p>
@@ -51,9 +55,6 @@
     <script src="js/light.js"></script>
     <script src="js/scene.js"></script>
     <script src="js/renderer.js"></script>
-    <script src="js/main.js"></script>
-
-
     <script src="js/scenes.js"></script>
     <script src="js/app.js"></script>
 </body>

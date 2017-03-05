@@ -46,10 +46,10 @@ PointSource.prototype.getName = function() {
     return "Point at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
 
-var ConeSource = function(brightness, posx, posy, dir, arc) {
+var ConeSource = function(brightness, posx, posy, theta, arc) {
     this.posx = posx;
     this.posy = posy;
-    this.dir = (dir - 0.5 * arc) * 2 * Math.PI;
+    this.theta = theta;
     this.arc = arc;
     this.brightness = brightness;
 };
@@ -59,7 +59,7 @@ ConeSource.prototype.getLightRays = function(num) {
         var offset = this.arc * 2 * Math.PI * Math.random() / num;
         var wavelength = Math.random() * (670 - 400) + 400;
         var theta_chunk = this.arc * 2 * Math.PI * i / num;
-        var ray = new LightRay(this.posx, this.posy, this.dir + offset + theta_chunk, wavelength);
+        var ray = new LightRay(this.posx, this.posy, this.theta + offset + theta_chunk, wavelength);
         rays.push(ray);
 
     }
@@ -74,18 +74,23 @@ var BeamSource = function(brightness, posx, posy, width, theta) {
     this.posy = posy;
     this.width = width;
     this.theta = theta;
-    this.endx = posx + width * Math.cos(theta + 0.5 * Math.PI);
-    this.endy = posy + width * Math.sin(theta + 0.5 * Math.PI);
-    this.dx = this.endx - posx;
-    this.dy = this.endy - posy;
     this.brightness = brightness;
+    this.init();
+};
+BeamSource.prototype.init = function() {
+    this.startx = this.posx - 0.5 * this.width * Math.cos(this.theta + 0.5 * Math.PI);
+    this.starty = this.posy - 0.5 * this.width * Math.sin(this.theta + 0.5 * Math.PI);
+    this.endx = this.posx + 0.5 * this.width * Math.cos(this.theta + 0.5 * Math.PI);
+    this.endy = this.posy + 0.5 * this.width * Math.sin(this.theta + 0.5 * Math.PI);
+    this.dx = this.endx - this.startx;
+    this.dy = this.endy - this.starty;
 };
 BeamSource.prototype.getLightRays = function(num) {
     var rays = [];
     for (var i = 0; i < num; i++) {
         var length = (i + Math.random()) / num;
-        var px = this.posx + this.dx * length;
-        var py = this.posy + this.dy * length;
+        var px = this.startx + this.dx * length;
+        var py = this.starty + this.dy * length;
 
         var wavelength = Math.random() * (670 - 400) + 400;
         var ray = new LightRay(px, py, this.theta, wavelength);

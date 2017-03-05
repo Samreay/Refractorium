@@ -1,6 +1,6 @@
 
 
-var Renderer = function(finalCanvas, hiddenCanvas, numRaysPerFrame, numBounces) {
+var Renderer = function(width, height, finalCanvas, hiddenCanvas, numRaysPerFrame, numBounces) {
     this.finalCanvas = finalCanvas;
     this.finalCtx = finalCanvas.getContext('2d');
     this.hiddenCanvas = hiddenCanvas;
@@ -11,8 +11,8 @@ var Renderer = function(finalCanvas, hiddenCanvas, numRaysPerFrame, numBounces) 
 
     this.lineWidthScale = 0.5;
 
-    this.w = null;
-    this.h = null;
+    this.w = width;
+    this.h = height;
     this.tempBuffer = null;
     this.finalBuffer = null;
     this.backgroundBuffer = null;
@@ -33,11 +33,7 @@ Renderer.prototype.init = function() {
     this.drawBackground()
 };
 Renderer.prototype.initFinalCanvas = function() {
-    var w = this.finalCanvas.width;
-    var h = this.finalCanvas.height;
-    this.w = w;
-    this.h = h;
-    this.finalBuffer = new Float32Array(w * h * 4);
+    this.finalBuffer = new Float32Array(this.w * this.h * 4);
     this.finalBuffer.fill(0);
 
 };
@@ -83,7 +79,7 @@ Renderer.prototype.renderFrame = function() {
         }
     }
     this.scene.lightRaysToRender = [];
-    var ret = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    var ret = ctx.getImageData(0, 0, this.w, this.h).data;
     return ret;
 };
 Renderer.prototype.render = function() {
