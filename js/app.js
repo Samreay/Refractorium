@@ -30,7 +30,9 @@ angular.module('refractorium', ['servicesZ'])
         self.selectScene = function(scene) {
             self.renderer.setScene(scene.scene);
         };
-
+        self.isScene = function(scene) {
+            return self.renderer.scene == scene.scene;
+        };
         self.getSceneObjects = function() {
             return self.renderer.scene.objects;
         };

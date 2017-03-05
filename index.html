@@ -6,45 +6,59 @@
     <script src="lib/angular.js"></script>
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/style.css">
 
 
 </head>
 <body ng-controller="MainController as ctrl">
-    <div class="container">
-        <div id="canvases">
-            <canvas id="mainCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-dblclick="ctrl.switchPlots()"></canvas>
-            <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}"  ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
+
+
+    <div class="sidebar">
+        <h2>Refractorium</h2>
+
+        <h4>Render Settings</h4>
+        <label for="NumRayPerFrame">Rays Per Frame:</label>
+        <input id="NumRayPerFrame" type="range" min="50" max="1000" step="1" ng-model="ctrl.renderer.numRaysPerFrame" ng-change="ctrl.renderer.init()">
+        <label for="NumBounces">Number of Light Bounces:</label>
+        <input id="NumBounces" type="range" min="2" max="20" step="1" ng-model="ctrl.renderer.numBounces" ng-change="ctrl.renderer.init()">
+
+        <h2>Scenes</h2>
+        <div class="btn-group-vert btn-block">
+            <button type="button" class="btn btn-vert btn-default btn-block" ng-class="{'active': ctrl.isScene(scene)}" ng-click="ctrl.selectScene(scene)" ng-repeat="scene in ctrl.scenes">{{scene.name}}</button>
         </div>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid notsidebar">
+            <div id="canvases">
+                <canvas id="mainCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-dblclick="ctrl.switchPlots()"></canvas>
+                <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
+            </div>
 
 
-        <div class="row">
-            <div id="scenes" class="col-lg-4">
-                <label for="NumRayPerFrame">Rays Per Frame:</label>
-                <input id="NumRayPerFrame" type="range" min="50" max="1000" step="1" ng-model="ctrl.renderer.numRaysPerFrame" ng-change="ctrl.renderer.init()">
-                <label for="NumBounces">Number of Light Bounces:</label>
-                <input id="NumBounces" type="range" min="2" max="20" step="1" ng-model="ctrl.renderer.numBounces" ng-change="ctrl.renderer.init()">
-                <h2>Scenes</h2>
-                <div class="row" ng-repeat="scene in ctrl.scenes">
-                    <p ng-click="ctrl.selectScene(scene)">{{scene.name}}</p>
+            <div class="row">
+                <div id="scenes" class="col-lg-4">
+
+
                 </div>
-            </div>
-            <div id="sceneObjects" class="col-lg-4">
-                <h2>Objects</h2>
-                <div class="row" ng-repeat="object in ctrl.getSceneObjects()">
-                    <p ng-click="ctrl.selectObject(object)">{{object.getName()}}</p>
+                <div id="sceneObjects" class="col-lg-4">
+                    <h2>Objects</h2>
+                    <div class="row" ng-repeat="object in ctrl.getSceneObjects()">
+                        <p ng-click="ctrl.selectObject(object)">{{object.getName()}}</p>
+                    </div>
                 </div>
-            </div>
-            <div id="objectProperties" class="col-lg-4">
-                <h2>Properties</h2>
-                <div class="row" ng-repeat="prop in ctrl.getSelectedObjectProperties()">
-                    <p>{{prop.label}}</p>
-                    <input type="range" min="{{prop.minv}}" max="{{prop.maxv}}" step="0.001" ng-model="prop.value" ng-change="ctrl.updateProperty(prop);">
+                <div id="objectProperties" class="col-lg-4">
+                    <h2>Properties</h2>
+                    <div class="row" ng-repeat="prop in ctrl.getSelectedObjectProperties()">
+                        <p>{{prop.label}}</p>
+                        <input type="range" min="{{prop.minv}}" max="{{prop.maxv}}" step="0.001" ng-model="prop.value" ng-change="ctrl.updateProperty(prop);">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
