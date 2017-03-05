@@ -1,11 +1,11 @@
 
 
-var Renderer = function(finalCanvas, hiddenCanvas, scene, numRaysPerFrame, numBounces) {
+var Renderer = function(finalCanvas, hiddenCanvas, numRaysPerFrame, numBounces) {
     this.finalCanvas = finalCanvas;
     this.finalCtx = finalCanvas.getContext('2d');
     this.hiddenCanvas = hiddenCanvas;
     this.hiddenCtx = hiddenCanvas.getContext('2d');
-    this.scene = scene;
+    this.scene = null;
     this.numRaysPerFrame = numRaysPerFrame;
     this.numBounces = numBounces;
 
@@ -23,6 +23,9 @@ var Renderer = function(finalCanvas, hiddenCanvas, scene, numRaysPerFrame, numBo
     // this.strokeStyle = "#FF0000";
     this.fillStyle = "rgba(100, 100, 100, 0.1)";
     // this.fillStyle = "rgba(0, 0, 0, 0)";
+};
+Renderer.prototype.setScene = function(scene) {
+    this.scene = scene;
     this.init();
 };
 Renderer.prototype.init = function() {
@@ -51,7 +54,9 @@ Renderer.prototype.drawBackground = function() {
     var imageData = c.getImageData(0, 0, this.w, this.h).data;
     this.tempBuffer = new Float32Array(imageData.length);
     for (var i = 0; i < this.scene.objects.length; i++) {
-        this.scene.objects[i].render(c, this.w, this.h, this.strokeStyle, this.fillStyle);
+        if (this.scene.objects[i].render != undefined) {
+            this.scene.objects[i].render(c, this.w, this.h, this.strokeStyle, this.fillStyle);
+        }
     }
     this.backgroundBuffer = c.getImageData(0, 0, this.w, this.h).data.slice(0);
 };
@@ -62,10 +67,10 @@ Renderer.prototype.renderFrame = function() {
 
     ctx.fillStyle = "#000000";
     ctx.fillRect(0, 0, w, h);
-    scene.addLightRays(this.numRaysPerFrame, this.numBounces);
+    this.scene.addLightRays(this.numRaysPerFrame, this.numBounces);
 
-    for (var i = 0; i < scene.lightRaysToRender.length; i++) {
-        var ray = scene.lightRaysToRender[i];
+    for (var i = 0; i < this.scene.lightRaysToRender.length; i++) {
+        var ray = this.scene.lightRaysToRender[i];
         var colour = rgbToString(nmToRGB(ray.lambda));
         ctx.strokeStyle = colour;
 
@@ -77,11 +82,14 @@ Renderer.prototype.renderFrame = function() {
             ctx.stroke();
         }
     }
-    scene.lightRaysToRender = [];
+    this.scene.lightRaysToRender = [];
     var ret = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
     return ret;
 };
 Renderer.prototype.render = function() {
+    if (this.scene == null) {
+        return;
+    }
     var image = this.finalCtx.getImageData(0, 0, this.w, this.h);
 
     var frameBuffer = this.renderFrame();

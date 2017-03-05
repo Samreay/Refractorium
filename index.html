@@ -1,18 +1,60 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="refractorium">
 <head>
     <meta charset="UTF-8">
     <title>Refractorium</title>
-</head>
-<body>
-    <div id="canvases">
+    <script src="lib/angular.js"></script>
 
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+
+
+</head>
+<body ng-controller="MainController as ctrl">
+    <div class="container">
+        <div id="canvases">
+            <canvas id="mainCanvas" width="1080" height="720"></canvas>
+            <canvas id="hiddenCanvas" width="1080" height="720" style="display: none"></canvas>
+        </div>
+
+
+        <div class="row">
+            <div id="scenes" class="col-lg-4">
+                <h2>Scenes</h2>
+                <div class="row" ng-repeat="scene in ctrl.scenes">
+                    <p ng-click="ctrl.selectScene(scene)">{{scene.name}}</p>
+                </div>
+            </div>
+            <div id="sceneObjects" class="col-lg-4">
+                <h2>Objects</h2>
+                <div class="row" ng-repeat="object in ctrl.getSceneObjects()">
+                    <p ng-click="ctrl.selectObject(object)">{{object.getName()}}</p>
+                </div>
+            </div>
+            <div id="objectProperties" class="col-lg-4">
+                <h2>Properties</h2>
+                <div class="row" ng-repeat="prop in ctrl.getSelectedObjectProperties()">
+                    <p>{{prop.label}}</p>
+                    <input type="range" min="{{prop.minv}}" max="{{prop.maxv}}" step="0.001" ng-model="prop.value" ng-change="ctrl.updateProperty(prop);">
+                </div>
+            </div>
+        </div>
     </div>
+
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="lib/bootstrap.min.js"></script>
 
     <script src="js/helper.js"></script>
     <script src="js/light.js"></script>
     <script src="js/scene.js"></script>
     <script src="js/renderer.js"></script>
     <script src="js/main.js"></script>
+
+
+    <script src="js/scenes.js"></script>
+    <script src="js/app.js"></script>
 </body>
 </html>

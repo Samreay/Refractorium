@@ -42,7 +42,9 @@ PointSource.prototype.getLightRays = function(num) {
     }
     return rays;
 };
-
+PointSource.prototype.getName = function() {
+    return "Point at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+};
 
 var ConeSource = function(brightness, posx, posy, dir, arc) {
     this.posx = posx;
@@ -62,6 +64,9 @@ ConeSource.prototype.getLightRays = function(num) {
 
     }
     return rays;
+};
+ConeSource.prototype.getName = function() {
+    return "Cone at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
 
 var BeamSource = function(brightness, posx, posy, width, theta) {
@@ -89,6 +94,9 @@ BeamSource.prototype.getLightRays = function(num) {
     }
     return rays;
 };
+BeamSource.prototype.getName = function() {
+    return "Beam at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+};
 
 var LaserSource = function(brightness, posx, posy, theta) {
     this.posx = posx;
@@ -107,6 +115,9 @@ LaserSource.prototype.getLightRays = function(num) {
 
     }
     return rays;
+};
+LaserSource.prototype.getName = function() {
+    return "Laser at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
 
 nmToRGB = function (wavelength) {

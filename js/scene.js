@@ -15,19 +15,24 @@ var Scene = function(aspect) {
 };
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
-};
-Scene.prototype.addLightSource = function (lightSource) {
-    this.lightSources.push(lightSource);
-    this.totalBrightness += lightSource.brightness;
+    if (obj.brightness != undefined) {
+        this.totalBrightness += obj.brightness;
+    }
 };
 Scene.prototype.addLightRays = function(num, numBounces) {
+    var lightSources = [];
+    for (var i = 0; i < this.objects.length; i++) {
+        if (this.objects[i].brightness != undefined) {
+            lightSources.push(this.objects[i]);
+        }
+    }
     var raysPerBrightness = num / this.totalBrightness;
     var rays = [];
-    for (var j = 0; j < this.lightSources.length; j++) {
-        var source = this.lightSources[j];
+    for (var j = 0; j < lightSources.length; j++) {
+        var source = lightSources[j];
         rays = rays.concat(source.getLightRays(Math.floor(source.brightness * raysPerBrightness)));
     }
-    for (var i = 0; i < rays.length; i++) {
+    for (i = 0; i < rays.length; i++) {
         this.simulateLightRay(rays[i], numBounces);
     }
 };
@@ -37,6 +42,9 @@ Scene.prototype.simulateLightRay = function (ray, numBounces) {
         var intersections = [];
         var distances = [];
         for (var j = 0; j < this.objects.length; j++) {
+            if (this.objects[j].brightness != undefined) {
+                continue;
+            }
             var intersection = this.objects[j].intersect(ray);
             if (intersection != null) {
                 intersections.push(intersection);
@@ -114,6 +122,17 @@ Line.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.lineTo(h * this.endx, h * this.endy);
     c.stroke();
 };
+Line.prototype.getName = function() {
+    var type = "Beam Splitter";
+    if (this.reflectivity > 0.9) {
+        if (this.roughness < 0.05) {
+            type = "Mirror";
+        } else {
+            type = "Wall"
+        }
+    }
+    return type + " at (" + this.startx.toFixed(2) + ", " + this.starty.toFixed(2) + ")";
+};
 
 
 
@@ -182,7 +201,9 @@ Box.prototype.intersect = function(ray) {
     close[5] = result[2];
     return close;
 };
-
+Box.prototype.getName = function() {
+    return "Box at (" + this.startx.toFixed(2) + ", " + this.starty.toFixed(2) + ")";
+};
 
 
 
@@ -246,6 +267,9 @@ Prism.prototype.intersect = function(ray) {
     close[5] = result[2];
     return close;
 };
+Prism.prototype.getName = function() {
+    return "Prism at (" + this.startx.toFixed(2) + ", " + this.starty.toFixed(2) + ")";
+};
 
 
 
@@ -278,6 +302,9 @@ Cylinder.prototype.intersect = function(ray) {
     var result = get_angle_permeable(ray, intersects[3], this.absorption, this.reflectivity, this.refractive, this.roughness);
     return [intersects[0], intersects[1], intersects[2], result[0], result[1], result[2]];
 };
+Cylinder.prototype.getName = function() {
+    return "Cylinder at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+};
 
 
 
@@ -294,12 +321,15 @@ var ConvexLens = function(posx, posy, height, theta, bulge, absorption, reflecti
     this.refractive = refractive;
     this.roughness = roughness;
 
-    this.offset = 0.5 * height / Math.tan(bulge);
-    this.radius = 0.5 * height / Math.sin(bulge);
-    this.c1x = this.posx + this.offset * Math.cos(theta);
-    this.c2x = this.posx - this.offset * Math.cos(theta);
-    this.c1y = this.posy + this.offset * Math.sin(theta);
-    this.c2y = this.posy - this.offset * Math.sin(theta);
+    this.init();
+};
+ConvexLens.prototype.init = function() {
+    this.offset = 0.5 * this.height / Math.tan(this.bulge);
+    this.radius = 0.5 * this.height / Math.sin(this.bulge);
+    this.c1x = this.posx + this.offset * Math.cos(this.theta);
+    this.c2x = this.posx - this.offset * Math.cos(this.theta);
+    this.c1y = this.posy + this.offset * Math.sin(this.theta);
+    this.c2y = this.posy - this.offset * Math.sin(this.theta);
 };
 ConvexLens.prototype.render = function(c, w, h, strokeStyle, fillStyle) {
     c.beginPath();
@@ -330,4 +360,7 @@ ConvexLens.prototype.intersect = function(ray) {
     }
     var result = get_angle_permeable(ray, intersects[3], this.absorption, this.reflectivity, this.refractive, this.roughness);
     return [intersects[0], intersects[1], intersects[2], result[0], result[1], result[2]];
+};
+ConvexLens.prototype.getName = function() {
+    return "ConvexLens at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
