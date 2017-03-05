@@ -154,8 +154,9 @@ function get_angle_permeable(ray, normal, absorb, reflectivity, refractive, roug
 
     var reflected = Math.random() < reflectivity;
     // If its a line and it isn't reflected, it keeps going, so don't calculate changes in angles.
-    if (refractive != null || !reflected) {
-
+    if (refractive == null && !reflected) {
+        normal += Math.PI;
+    } else {
         var angles = get_angle_incidence(ray.theta, normal);
         var angle_incidence = angles[0];
         normal = angles[1];

@@ -114,7 +114,7 @@ nmToRGB = function (wavelength) {
         IntensityMax = 255,
         factor, red, green, blue;
 
-    var t1 = 350, t2 = 440, t3 = 490, t4 = 510, t5 = 580, t6 = 645, t7 = 781;
+    var t1 = 350, t2 = 460, t3 = 520, t4 = 540, t5 = 580, t6 = 670, t7 = 781;
     if ((wavelength >= t1) && (wavelength < t2)) {
         red = -(wavelength - t2) / (t2 - t1);
         green = 0.0;
