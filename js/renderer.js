@@ -9,6 +9,9 @@ var Renderer = function(width, height, finalCanvas, hiddenCanvas, numRaysPerFram
     this.numRaysPerFrame = numRaysPerFrame;
     this.numBounces = numBounces;
 
+    this.image = null;
+    this.busy = false;
+
     this.lineWidthScale = 0.5;
 
     this.w = width;
@@ -46,6 +49,7 @@ Renderer.prototype.drawBackground = function() {
     }
     var c = this.hiddenCtx;
     c.fillStyle = "#111111";
+    this.image = c.getImageData(0, 0, this.w, this.h);
     c.fillRect(0, 0, this.w, this.h);
     var imageData = c.getImageData(0, 0, this.w, this.h).data;
     this.tempBuffer = new Float32Array(imageData.length);
@@ -86,20 +90,20 @@ Renderer.prototype.render = function() {
     if (this.scene == null) {
         return;
     }
-    var image = this.finalCtx.getImageData(0, 0, this.w, this.h);
-
-    var frameBuffer = this.renderFrame();
-    if (this.showFinal) {
-        vec_add(this.tempBuffer, frameBuffer);
-        // vec_normalise_channels(this.tempBuffer, this.finalBuffer);
-        vec_normalise(this.tempBuffer, this.finalBuffer, 3);
-        vec_add(this.finalBuffer, this.backgroundBuffer);
-        vec_clip(this.finalBuffer, image.data);
-    } else {
-        vec_clip(frameBuffer, image.data);
+    if (!this.busy) {
+        this.busy = true;
+        var frameBuffer = this.renderFrame();
+        if (this.showFinal) {
+            vec_add(this.tempBuffer, frameBuffer);
+            // vec_normalise_channels(this.tempBuffer, this.finalBuffer);
+            vec_normalise(this.tempBuffer, this.finalBuffer, 3);
+            vec_add(this.finalBuffer, this.backgroundBuffer);
+            vec_clip(this.finalBuffer, this.image.data);
+        } else {
+            vec_clip(frameBuffer, this.image.data);
+        }
+        this.finalCtx.putImageData(this.image, 0, 0);
+        this.busy = false;
     }
-
-
-    this.finalCtx.putImageData(image, 0, 0);
 
 };

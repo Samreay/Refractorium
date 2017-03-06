@@ -6,6 +6,7 @@
     <script src="lib/angular.js"></script>
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/rzslider.min.css">
     <link rel="stylesheet" href="css/style.css">
 
 
@@ -51,9 +52,9 @@
                 </div>
                 <div id="objectProperties" class="col-lg-4">
                     <h2>Properties</h2>
-                    <div class="row" ng-repeat="prop in ctrl.getSelectedObjectProperties()">
-                        <p>{{prop.label}}</p>
-                        <input type="range" min="{{prop.minv}}" max="{{prop.maxv}}" step="0.001" ng-model="prop.value" ng-change="ctrl.updateProperty(prop);">
+                    <div class="row" ng-repeat="slider in ctrl.getSelectedObjectProperties()">
+                        <p>{{slider.label}}</p>
+                        <rzslider rz-slider-model="slider.value" rz-slider-options="slider.options" ">
                     </div>
                 </div>
             </div>
@@ -64,6 +65,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="lib/bootstrap.min.js"></script>
+    <script src="lib/rzslider.min.js"></script>
 
     <script src="js/helper.js"></script>
     <script src="js/light.js"></script>

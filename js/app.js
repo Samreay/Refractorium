@@ -1,6 +1,6 @@
 
 
-angular.module('refractorium', ['servicesZ'])
+angular.module('refractorium', ['servicesZ', 'rzModule'])
 
     .controller('MainController', ['scenesService', function(scenesService) {
         var self = this;
@@ -19,7 +19,7 @@ angular.module('refractorium', ['servicesZ'])
 
         angular.element(document).ready(function () {
             self.renderer.init();
-            window.setInterval(self.renderer.render.bind(self.renderer), 200);
+            window.setInterval(self.renderer.render.bind(self.renderer), 50);
 
         });
 
@@ -44,6 +44,16 @@ angular.module('refractorium', ['servicesZ'])
             self.selectedObject = object;
             self.computeObjectProperties();
         };
+        self.getSelectedObjectProperties = function() {
+            return self.selectedObjectProperties;
+        };
+        self.updateProperty = function(property, value) {
+            self.selectedObject[property] = value;
+            if (self.selectedObject.init != undefined) {
+                self.selectedObject.init();
+            }
+            self.renderer.init();
+        };
         self.computeObjectProperties = function() {
             self.selectedObjectProperties = [];
             var o = self.selectedObject;
@@ -51,51 +61,47 @@ angular.module('refractorium', ['servicesZ'])
                 return;
             }
             if (o.brightness != undefined) {
-                self.selectedObjectProperties.push({key: "brightness", label: "Brightness", value: o.brightness, minv: 0, maxv: 2})
+                self.selectedObjectProperties.push({key: "brightness", label: "Brightness", value: o.brightness, options: {floor: 0, ceil: 2, step: 0.01, precision: 3}})
             }
             if (o.posx != undefined) {
-                self.selectedObjectProperties.push({key: "posx", label: "Position x", value: o.posx, minv: 0, maxv: 1.5})
+                self.selectedObjectProperties.push({key: "posx", label: "Position x", value: o.posx,  options: {floor: 0, ceil: 1.5, step: 0.001, precision: 3}})
             }
             if (o.posy != undefined) {
-                self.selectedObjectProperties.push({key: "posy", label: "Position y", value: o.posy, minv: 0, maxv: 1})
+                self.selectedObjectProperties.push({key: "posy", label: "Position y", value: o.posy,  options: {floor: 0, ceil: 1, step: 0.001, precision: 3}})
             }
             if (o.theta != undefined) {
-                self.selectedObjectProperties.push({key: "theta", label: "Angle", value: o.theta, minv: 0, maxv: 2 * Math.PI})
+                self.selectedObjectProperties.push({key: "theta", label: "Angle", value: o.theta,  options: {floor: 0, ceil: 2 * Math.PI, step: 0.001, precision: 3}})
             }
             if (o.width != undefined) {
-                self.selectedObjectProperties.push({key: "width", label: "Width", value: o.width, minv: 0, maxv: 1})
+                self.selectedObjectProperties.push({key: "width", label: "Width", value: o.width,  options: {floor: 0, ceil: 2, step: 0.001, precision: 3}})
             }
             if (o.height != undefined) {
-                self.selectedObjectProperties.push({key: "height", label: "Height", value: o.height, minv: 0, maxv: 1})
+                self.selectedObjectProperties.push({key: "height", label: "Height", value: o.height,  options: {floor: 0, ceil: 2, step: 0.001, precision: 3}})
             }
             if (o.radius != undefined) {
-                self.selectedObjectProperties.push({key: "radius", label: "Radius", value: o.radius, minv: 0, maxv: 1})
+                self.selectedObjectProperties.push({key: "radius", label: "Radius", value: o.radius,  options: {floor: 0, ceil: 2, step: 0.001, precision: 3}})
             }
             if (o.arc != undefined) {
-                self.selectedObjectProperties.push({key: "arc", label: "Arc", value: o.arc, minv: 0, maxv: Math.PI / 2})
+                self.selectedObjectProperties.push({key: "arc", label: "Arc", value: o.arc,  options: {floor: 0, ceil: Math.PI / 2, step: 0.001, precision: 3}})
             }
             if (o.absorption != undefined) {
-                self.selectedObjectProperties.push({key: "absorption", label: "Absorption", value: o.absorption, minv: 0, maxv: 1})
+                self.selectedObjectProperties.push({key: "absorption", label: "Absorption", value: o.absorption, options: {floor: 0, ceil: 2, step: 0.001, precision: 3}})
             }
             if (o.reflectivity != undefined) {
-                self.selectedObjectProperties.push({key: "reflectivity", label: "Reflectivity", value: o.reflectivity, minv: 0, maxv: 1})
+                self.selectedObjectProperties.push({key: "reflectivity", label: "Reflectivity", value: o.reflectivity,  options: {floor: 0, ceil: 2, step: 0.001, precision: 3}})
             }
             if (o.refractive != undefined) {
-                self.selectedObjectProperties.push({key: "refractive", label: "Refractive Index", value: o.refractive, minv: 1, maxv: 3})
+                self.selectedObjectProperties.push({key: "refractive", label: "Refractive Index", value: o.refractive,  options: {floor: 0, ceil: 3, step: 0.001, precision: 3}})
             }
             if (o.absorption != undefined) {
-                self.selectedObjectProperties.push({key: "roughness", label: "Roughness", value: o.roughness, minv: 0, maxv: 1})
+                self.selectedObjectProperties.push({key: "roughness", label: "Roughness", value: o.roughness,  options: {floor: 0, ceil: 2, step: 0.001, precision: 3}})
             }
-        };
-        self.getSelectedObjectProperties = function() {
-            return self.selectedObjectProperties;
-        };
-        self.updateProperty = function(property) {
-            self.selectedObject[property.key] = property.value;
-            if (self.selectedObject.init != undefined) {
-                self.selectedObject.init();
+            for (var i = 0; i < self.selectedObjectProperties.length; i++) {
+                self.selectedObjectProperties[i].options.id = self.selectedObjectProperties[i].key;
+                self.selectedObjectProperties[i].options.onChange = function(id, value) {
+                    self.updateProperty(id, value)
+                };
             }
-            self.renderer.init();
         };
 
         self.selectScene(self.scenes[0]);
