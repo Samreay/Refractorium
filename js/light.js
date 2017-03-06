@@ -72,10 +72,10 @@ ConeSource.prototype.init = function() {
 ConeSource.prototype.getLightRays = function(num) {
     var rays = [];
     for (var i = 0; i < num; i++) {
-        var offset = this.arc * 2 * Math.PI * Math.random() / num;
+        var offset = this.arc * Math.random() / num;
         var wavelength = Math.random() * (670 - 400) + 400;
-        var theta_chunk = this.arc * 2 * Math.PI * i / num;
-        var ray = new LightRay(this.posx, this.posy, this.theta + offset + theta_chunk, wavelength);
+        var theta_chunk = this.arc * i / num;
+        var ray = new LightRay(this.posx, this.posy, this.theta - 0.5 * this.arc + offset + theta_chunk, wavelength);
         rays.push(ray);
 
     }

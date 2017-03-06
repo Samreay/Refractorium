@@ -32,6 +32,21 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         self.selectedObjectProperties = [];
         self.activeObject = null;
         self.mouseDownAndSelected = false;
+        self.xdown = null;
+        self.ydown = null;
+        self.generator = new Generator();
+
+        self.addObject = function(objtype) {
+            self.generator.addObjectToScene(self.activeSceneObj.scene, objtype);
+            self.sceneObjects = self.activeSceneObj.scene.objects;
+            self.renderer.init();
+        };
+        self.addLight = function(objtype) {
+            self.generator.addLightToScene(self.activeSceneObj.scene, objtype);
+            self.sceneObjects = self.activeSceneObj.scene.objects;
+            self.renderer.init();
+        };
+
 
         self.selectScene = function() {
             for (var i = 0; i < self.scenes.length; i++) {
@@ -77,6 +92,8 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             self.selectObject();
             if (self.activeObjectIndex != "") {
                 self.mouseDownAndSelected = true;
+                self.xdown = $event.offsetX;
+                self.ydown = $event.offsetY;
             }
             if($event.stopPropagation) $event.stopPropagation();
             if($event.preventDefault) $event.preventDefault();
@@ -92,6 +109,10 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         };
         self.canvasMouseMove = function($event) {
             if (self.mouseDownAndSelected) {
+                var moveDist2 = ($event.offsetX - self.xdown) * ($event.offsetX - self.xdown) + ($event.offsetY - self.ydown) * ($event.offsetY - self.ydown);
+                if (moveDist2 < 20) {
+                    return;
+                }
                 var x = $event.offsetX / self.height;
                 var y = $event.offsetY / self.height;
                 self.selectedObject.posx = x;
