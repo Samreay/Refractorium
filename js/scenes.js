@@ -21,33 +21,56 @@ angular.module('servicesZ', []).service("scenesService", [function () {
     scene.addObject(new Line(1.33, 0.75, 0.6, 0.4, 0.1, 1.0, 0.5));
     scene.addObject(new ConvexLens(1.1, 0.43, 0.2, 0.2, 0.9, 0, 0, 1.5, 0));
 
-    scenes.push({"name": "Complicated", "scene": scene});
+    scenes.push({"name": "Mixed Bag", "scene": scene});
+
+    scene = new Scene(aspect);
+    scene.addObject(new ConeSource(1.0, 0.03, 0.9, 6.0, 0.001));
+    scene.addObject(new Line(0.4, 0.7821, 5.3, 0.1, 0.0, 0.2, 0.0));
+    scene.addObject(new Cylinder(0.286, 0.315, 0.155, 0.0, 0.0, 1.5, 0.0));
+    scene.addObject(new Prism(0.418, 0.493, 0.134, 2.028, 0.0, 0.0, 1.5, 0.0));
+    scene.addObject(new ConvexLens(1.058, 0.507, 0.235, 2.243, 0.761, 0.0, 0.0, 1.5, 0.0));
+    scene.addObject(new Line(0.75, 0.00, 0, 1.5, 0.0, 1.0, 0.9));
+    scene.addObject(new Line(0.75, 1.0, 0, 1.5, 0.0, 1.0, 0.9));
+    scene.addObject(new Line(1.4, 0.9, 5.4, 0.2, 0.0, 1.0, 0.05));
+
+    scenes.push({"name": "Bouncing Light", "scene": scene});
+
 
 
     scene = new Scene(aspect);
-    scene.addObject(new BeamSource(1.0, 0.1, 0.5, 0.4, 0));
-    scene.addObject(new Cylinder(0.5, 0.5, 0.1, 0.0, 0.0, 1.3, 0.0));
-    scenes.push({"name": "Cylinder", "scene": scene});
+    scene.addObject(new PointSource(1.0, 0.392, 0.296));
+    scene.addObject(new PointSource(0.8, 1.046, 0.344));
+    scene.addObject(new PointSource(0.8, 0.7176, 0.825));
+    scene.addObject(new PointSource(1.0, 1.178, 0.763));
+    scene.addObject(new PointSource(0.2, 0.679, 0.59));
+    scene.addObject(new Cylinder(0.3, 0.57, 0.1, 0.0, 0.0, 1.3, 0.0));
+    scene.addObject(new Cylinder(0.7, 0.28, 0.13, 0.0, 0.0, 1.3, 0.0));
+    scene.addObject(new ConvexLens(0.7, 0.7, 0.245, 0.238, 0.54, 0.0, 0.0, 1.5, 0.0));
+    scene.addObject(new ConvexLens(0.9, 0.61, 0.166, 4.03, 0.75, 0.0, 0.0, 1.5, 0.0));
+    // scene.addObject(new Line(0.75, 0, 0, 1.5, 0.3, 1.0, 1.0, 0.5));
+    // scene.addObject(new Line(0.75, 1, 0, 1.5, 0.3, 1.0, 1.0, 0.5));
+    // scene.addObject(new Line(0, 0.5, Math.PI / 2, 1, 0.3, 1.0, 0.5));
+    // scene.addObject(new Line(1.5, 0.5, Math.PI / 2, 1, 0.3, 1.0, 0.5));
 
-    scene = new Scene(aspect);
-    scene.addObject(new PointSource(1.0, 0.75, 0.5));
-    scene.addObject(new Prism(0.4, 0.5, 0.1, 0.3, 0.0, 0.0, 1.7, 0.0));
-    scenes.push({"name": "Prism", "scene": scene});
+    scenes.push({"name": "Southern Cross", "scene": scene});
 
-    scene = new Scene(aspect);
-    scene.addObject(new LaserSource(1.0, 0.88, 0.5, 4.742));
-    scene.addObject(new Box(0.75, 0.5, 0.3, 0.3, 0.2, 0.0, 0.0, 0.23, 0.0));
-    scenes.push({"name": "Box", "scene": scene});
+    if (false) {
+        scene = new Scene(aspect);
+        scene.addObject(new LaserSource(1.0, 0.88, 0.5, 4.742));
+        scene.addObject(new Box(0.75, 0.5, 0.3, 0.3, 0.2, 0.0, 0.0, 0.23, 0.0));
+        scenes.push({"name": "Box", "scene": scene});
 
 
-    scene = new Scene(aspect);
-    scene.addObject(new PointSource(1.0, 0.3, 0.5));
-    scene.addObject(new ConvexLens(0.7, 0.5, 0.2, 0, 0.6, 0, 0, 1.5, 0));
-    scenes.push({"name": "Convex", "scene": scene});
+        scene = new Scene(aspect);
+        scene.addObject(new PointSource(1.0, 0.3, 0.5));
+        scene.addObject(new ConvexLens(0.7, 0.5, 0.2, 0, 0.6, 0, 0, 1.5, 0));
+        scenes.push({"name": "Convex", "scene": scene});
 
-    scene = new Scene(aspect);
-    scene.addObject(new PointSource(1.0, 0.75, 0.5));
-    scenes.push({"name": "Blank", "scene": scene});
+        scene = new Scene(aspect);
+        scene.addObject(new PointSource(1.0, 0.75, 0.5));
+        scenes.push({"name": "Blank", "scene": scene});
+
+    }
 
     self.getScenes = function () {
         return scenes;

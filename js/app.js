@@ -121,6 +121,7 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
                     self.selectedObject.init();
                 }
                 self.renderer.init();
+                self.computeObjectProperties()
             } else {
                 var objectIndex = self.activeSceneObj.scene.getObjectFromClick($event.offsetX / self.height, $event.offsetY / self.height);
                 if (objectIndex != null) {

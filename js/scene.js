@@ -447,7 +447,7 @@ Generator.prototype.addObjectToScene = function(scene, objectType) {
     } else if (objectType == "Cylinder") {
         scene.addObject(new Cylinder(Math.random() * 1.5, Math.random(), 0.1 + 0.1 * Math.random(), 0, 0, 1.5, 0));
     } else if (objectType == "Convex") {
-        scene.addObject(new ConvexLens(Math.random() * 1.5, Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.PI, 0.1 + 0.3 * Math.PI * Math.random(), 0, 0, 1.5, 0));
+        scene.addObject(new ConvexLens(Math.random() * 1.5, Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.random(), 0.1 + 0.3 * Math.PI * Math.random(), 0, 0, 1.5, 0));
     }
 };
 Generator.prototype.addLightToScene = function(scene, objectType) {
