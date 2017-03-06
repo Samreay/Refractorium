@@ -8,10 +8,10 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         self.width = 1080;
         self.height = 720;
 
-        var canvas = document.getElementById("mainCanvas");
-        var canvas2 = document.getElementById("hiddenCanvas");
+        self.canvas = document.getElementById("mainCanvas");
+        self.canvas2 = document.getElementById("hiddenCanvas");
 
-        self.renderer = new Renderer(self.width, self.height, canvas, canvas2, 500, 19);
+        self.renderer = new Renderer(self.width, self.height, self.canvas, self.canvas2, 500, 19);
 
         self.switchPlots = function() {
             self.renderer.showFinal = !self.renderer.showFinal;
@@ -100,6 +100,15 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
                     self.selectedObject.init();
                 }
                 self.renderer.init();
+            } else {
+                var objectIndex = self.activeSceneObj.scene.getObjectFromClick($event.offsetX / self.height, $event.offsetY / self.height);
+                if (objectIndex != null) {
+                    self.canvas.style.cursor = "pointer";
+                    self.canvas2.style.cursor = "pointer";
+                } else {
+                    self.canvas.style.cursor = "crosshair";
+                    self.canvas2.style.cursor = "crosshair";
+                }
             }
         };
 
