@@ -33,3 +33,25 @@ body {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
+
+.custom.rzslider {
+    margin: 25px 0 5px 0;
+}
+.custom.rzslider .rz-pointer {
+    width: 14px;
+    height: 14px;
+    top: auto;
+    bottom: 0;
+}
+.custom.rzslider .rz-bubble {
+    bottom: 14px;
+}
+.custom.rzslider .rz-bar-wrapper {
+    padding-top: 10px;
+}
+.custom.rzslider .rz-pointer:after {
+    top: 5px;
+    left: 5px;
+    width: 4px;
+    height: 4px;
+}

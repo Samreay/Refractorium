@@ -15,17 +15,32 @@
 
 
     <div class="sidebar">
-        <h2>Refractorium</h2>
+        <h1>Refractorium</h1>
 
         <h4>Render Settings</h4>
-        <label for="NumRayPerFrame">Rays Per Frame:</label>
-        <input id="NumRayPerFrame" type="range" min="50" max="1000" step="1" ng-model="ctrl.renderer.numRaysPerFrame" ng-change="ctrl.renderer.init()">
-        <label for="NumBounces">Number of Light Bounces:</label>
-        <input id="NumBounces" type="range" min="2" max="20" step="1" ng-model="ctrl.renderer.numBounces" ng-change="ctrl.renderer.init()">
 
-        <h2>Scenes</h2>
-        <div class="btn-group-vert btn-block">
-            <button type="button" class="btn btn-vert btn-default btn-block" ng-class="{'active': ctrl.isScene(scene)}" ng-click="ctrl.selectScene(scene)" ng-repeat="scene in ctrl.scenes">{{scene.name}}</button>
+        <label for="NumRayPerFrame">Rays Per Frame:</label>
+        <rzslider class="custom" id="NumRayPerFrame" rz-slider-model="ctrl.renderer.numRaysPerFrame" rz-slider-options="ctrl.sliderNumRaysPerFrameOptions"></rzslider>
+
+
+        <label for="NumBounces">Number of Light Bounces:</label>
+        <rzslider class="custom" id="NumBounces" rz-slider-model="ctrl.renderer.numBounces" rz-slider-options="ctrl.sliderBounceOptions"></rzslider>
+
+        <label for="Exposure">Exposure:</label>
+        <rzslider class="custom" id="Exposure" rz-slider-model="ctrl.renderer.exposure" rz-slider-options="ctrl.sliderExposureptions"></rzslider>
+
+        <h4>Scenes</h4>
+
+        <select class="form-control" name="repeatSelect" id="repeatSelect" ng-model="ctrl.activeScene" ng-change="ctrl.selectScene(scene)">
+            <option ng-repeat="scene in ctrl.scenes" value="{{scene.name}}">{{scene.name}}</option>
+        </select>
+
+        <div ng-show="ctrl.selectedObject != null">
+            <h4>{{ctrl.getObjName()}}</h4>
+            <div ng-repeat="slider in ctrl.getSelectedObjectProperties()">
+                <label for="{{slider.key}}">{{slider.label}}</label>
+                <rzslider id="{{slider.key}}" class="custom" rz-slider-model="slider.value" rz-slider-options="slider.options" ></rzslider>
+            </div>
         </div>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -48,13 +63,6 @@
                     <h2>Objects</h2>
                     <div class="row" ng-repeat="object in ctrl.getSceneObjects()">
                         <p ng-click="ctrl.selectObject(object)">{{object.getName()}}</p>
-                    </div>
-                </div>
-                <div id="objectProperties" class="col-lg-4">
-                    <h2>Properties</h2>
-                    <div class="row" ng-repeat="slider in ctrl.getSelectedObjectProperties()">
-                        <p>{{slider.label}}</p>
-                        <rzslider rz-slider-model="slider.value" rz-slider-options="slider.options" ">
                     </div>
                 </div>
             </div>

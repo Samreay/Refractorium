@@ -8,6 +8,7 @@ var Renderer = function(width, height, finalCanvas, hiddenCanvas, numRaysPerFram
     this.scene = null;
     this.numRaysPerFrame = numRaysPerFrame;
     this.numBounces = numBounces;
+    this.exposure = 2.0;
 
     this.image = null;
     this.busy = false;
@@ -96,7 +97,7 @@ Renderer.prototype.render = function() {
         if (this.showFinal) {
             vec_add(this.tempBuffer, frameBuffer);
             // vec_normalise_channels(this.tempBuffer, this.finalBuffer);
-            vec_normalise(this.tempBuffer, this.finalBuffer, 3);
+            vec_normalise(this.tempBuffer, this.finalBuffer, this.exposure);
             vec_add(this.finalBuffer, this.backgroundBuffer);
             vec_clip(this.finalBuffer, this.image.data);
         } else {
