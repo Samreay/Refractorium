@@ -106,5 +106,4 @@ Renderer.prototype.render = function() {
         this.finalCtx.putImageData(this.image, 0, 0);
         this.busy = false;
     }
-
 };

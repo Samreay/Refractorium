@@ -35,8 +35,8 @@ angular.module('servicesZ', []).service("scenesService", [function () {
     scenes.push({"name": "Prism", "scene": scene});
 
     scene = new Scene(aspect);
-    scene.addObject(new PointSource(1.0, 0.75, 0.5));
-    scene.addObject(new Box(0.75, 0.5, 0.3, 0.3, 0.2, 0.0, 0.0, 1.7, 0.0));
+    scene.addObject(new LaserSource(1.0, 0.88, 0.5, 4.742));
+    scene.addObject(new Box(0.75, 0.5, 0.3, 0.3, 0.2, 0.0, 0.0, 0.23, 0.0));
     scenes.push({"name": "Box", "scene": scene});
 
 

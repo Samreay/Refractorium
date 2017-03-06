@@ -63,7 +63,52 @@ Scene.prototype.simulateLightRay = function (ray, numBounces) {
 
     this.lightRaysToRender.push(ray);
 };
+Scene.prototype.getObjectFromClick = function(x, y) {
+    var numRays = 60, metrics = [], i, j;
 
+    for (i = 0; i < this.objects.length; i++ ) {
+        var object = this.objects[i];
+        var numHit = 0, minDist = 9e9;
+        for (j = 0; j < numRays; j++) {
+            var ray = new LightRay(x, y, Math.PI * 2 * j / numRays, 500);
+            var intersect = object.intersect(ray);
+            if (intersect != null) {
+                numHit++;
+                var dist = intersect[0];
+                if (dist < minDist) {
+                    minDist = dist;
+                }
+            }
+        }
+        if (object.twoD != undefined) {
+            metrics.push(1 / (5 * minDist + 1));
+        } else {
+            var size = object.height;
+            if (size == undefined) {
+                size = object.radius;
+            }
+            if (size == undefined) {
+                size = object.width;
+            }
+            if (size == undefined) {
+                size = object.rradius;
+            }
+            metrics.push(2 * (numHit / numRays) / (1 + size))
+        }
+    }
+    var bestMetric = 0;
+    var index = 0;
+    for (i = 0; i < metrics.length; i++) {
+        if (metrics[i] > bestMetric) {
+            bestMetric = metrics[i];
+            index = i;
+        }
+    }
+    if (bestMetric > 0.8) {
+        return index;
+    }
+    return null;
+};
 
 var Line = function(posx, posy, theta, height, absorption, reflectivity, roughness) {
     this.posx = posx;
@@ -73,6 +118,7 @@ var Line = function(posx, posy, theta, height, absorption, reflectivity, roughne
     this.absorption = absorption;
     this.reflectivity = reflectivity;
     this.roughness = roughness;
+    this.twoD = true;
     this.init();
 };
 Line.prototype.init = function() {
@@ -130,7 +176,7 @@ Line.prototype.getName = function() {
     if (this.absorption > 0.99) {
         type = "Wall";
     }
-    return type + " at (" + this.startx.toFixed(2) + ", " + this.starty.toFixed(2) + ")";
+    return type + " at (" + this.startx.toFixed(1) + ", " + this.starty.toFixed(1) + ")";
 };
 
 
@@ -206,7 +252,7 @@ Box.prototype.intersect = function(ray) {
     return close;
 };
 Box.prototype.getName = function() {
-    return "Box at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+    return "Box at (" + this.posx.toFixed(1) + ", " + this.posy.toFixed(1) + ")";
 };
 
 
@@ -283,7 +329,7 @@ Prism.prototype.intersect = function(ray) {
     return close;
 };
 Prism.prototype.getName = function() {
-    return "Prism at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+    return "Prism at (" + this.posx.toFixed(1) + ", " + this.posy.toFixed(1) + ")";
 };
 
 
@@ -318,7 +364,7 @@ Cylinder.prototype.intersect = function(ray) {
     return [intersects[0], intersects[1], intersects[2], result[0], result[1], result[2]];
 };
 Cylinder.prototype.getName = function() {
-    return "Cylinder at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+    return "Cylinder at (" + this.posx.toFixed(1) + ", " + this.posy.toFixed(1) + ")";
 };
 
 
@@ -377,5 +423,5 @@ ConvexLens.prototype.intersect = function(ray) {
     return [intersects[0], intersects[1], intersects[2], result[0], result[1], result[2]];
 };
 ConvexLens.prototype.getName = function() {
-    return "ConvexLens at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+    return "Convex at (" + this.posx.toFixed(1) + ", " + this.posy.toFixed(1) + ")";
 };

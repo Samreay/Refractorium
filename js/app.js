@@ -2,7 +2,7 @@
 
 angular.module('refractorium', ['servicesZ', 'rzModule'])
 
-    .controller('MainController', ['scenesService', '$timeout', function(scenesService, $timeout) {
+    .controller('MainController', ['scenesService', function(scenesService) {
         var self = this;
 
         self.width = 1080;
@@ -68,6 +68,14 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             }
             self.renderer.init();
         };
+
+
+        self.canvasClick = function($event) {
+            var objectIndex = self.activeSceneObj.scene.getObjectFromClick($event.offsetX / self.height, $event.offsetY / self.height);
+            self.activeObjectIndex = "" + objectIndex;
+            self.selectObject();
+        };
+
         self.computeObjectProperties = function() {
             self.selectedObjectProperties = [];
             var o = self.selectedObject;
@@ -133,7 +141,7 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         };
         self.sliderExposureptions = {
             floor: 0.5,
-            ceil: 5,
+            ceil: 8,
             step: 0.1,
             precision: 1
         };

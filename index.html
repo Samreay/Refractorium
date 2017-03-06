@@ -18,13 +18,13 @@
         <h1 style="margin-top: 0;">Refractorium</h1>
 
         <h4>Render Settings</h4>
-
+        <p>Double click canvas for fun.</p>
         <label for="NumRayPerFrame">Rays Per Frame:</label>
         <rzslider class="custom" id="NumRayPerFrame" rz-slider-model="ctrl.renderer.numRaysPerFrame" rz-slider-options="ctrl.sliderNumRaysPerFrameOptions"></rzslider>
 
 
-        <label for="NumBounces">Number of Light Bounces:</label>
-        <rzslider class="custom" id="NumBounces" rz-slider-model="ctrl.renderer.numBounces" rz-slider-options="ctrl.sliderBounceOptions"></rzslider>
+        <!--<label for="NumBounces">Number of Light Bounces:</label>-->
+        <!--<rzslider class="custom" id="NumBounces" rz-slider-model="ctrl.renderer.numBounces" rz-slider-options="ctrl.sliderBounceOptions"></rzslider>-->
 
         <label for="Exposure">Exposure:</label>
         <rzslider class="custom" id="Exposure" rz-slider-model="ctrl.renderer.exposure" rz-slider-options="ctrl.sliderExposureptions"></rzslider>
@@ -41,8 +41,7 @@
             <option ng-repeat="object in ctrl.sceneObjects" value="{{$index}}">{{object.getName()}}</option>
         </select>
 
-        <div ng-show="ctrl.selectedObject != null">
-            <h4>{{ctrl.getObjName()}}</h4>
+        <div ng-if="ctrl.selectedObject != null">
             <div ng-repeat="slider in ctrl.getSelectedObjectProperties()">
                 <label for="{{slider.key}}">{{slider.label}}</label>
                 <rzslider id="{{slider.key}}" class="custom" rz-slider-model="slider.value" rz-slider-options="slider.options" ></rzslider>
@@ -55,8 +54,8 @@
     <div id="page-content-wrapper">
         <div class="container-fluid notsidebar">
             <div id="canvases">
-                <canvas id="mainCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-dblclick="ctrl.switchPlots()"></canvas>
-                <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
+                <canvas id="mainCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-click="ctrl.canvasClick($event)" ng-dblclick="ctrl.switchPlots()"></canvas>
+                <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-click="ctrl.canvasClick($event)" ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
             </div>
 
         </div>
@@ -69,8 +68,8 @@
     <script src="lib/rzslider.min.js"></script>
 
     <script src="js/helper.js"></script>
-    <script src="js/light.js"></script>
     <script src="js/scene.js"></script>
+    <script src="js/light.js"></script>
     <script src="js/renderer.js"></script>
     <script src="js/scenes.js"></script>
     <script src="js/app.js"></script>

@@ -30,6 +30,11 @@ var PointSource = function(brightness, posx, posy) {
     this.posx = posx;
     this.posy = posy;
     this.brightness = brightness;
+    this.rradius = 0.03;
+    this.init();
+};
+PointSource.prototype.init = function() {
+    this.intersectObject = new Cylinder(this.posx, this.posy, this.rradius, 1.0, 0.0, 1.0, 0.0);
 };
 PointSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -45,6 +50,12 @@ PointSource.prototype.getLightRays = function(num) {
 PointSource.prototype.getName = function() {
     return "Point at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
+PointSource.prototype.intersect = function(ray) {
+    return this.intersectObject.intersect(ray);
+};
+
+
+
 
 var ConeSource = function(brightness, posx, posy, theta, arc) {
     this.posx = posx;
@@ -52,6 +63,11 @@ var ConeSource = function(brightness, posx, posy, theta, arc) {
     this.theta = theta;
     this.arc = arc;
     this.brightness = brightness;
+    this.rradius = 0.03;
+    this.init();
+};
+ConeSource.prototype.init = function() {
+    this.intersectObject = new Cylinder(this.posx, this.posy, this.rradius, 1.0, 0.0, 1.0, 0.0);
 };
 ConeSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -68,6 +84,10 @@ ConeSource.prototype.getLightRays = function(num) {
 ConeSource.prototype.getName = function() {
     return "Cone at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
+ConeSource.prototype.intersect = function(ray) {
+    return this.intersectObject.intersect(ray);
+};
+
 
 var BeamSource = function(brightness, posx, posy, width, theta) {
     this.posx = posx;
@@ -75,6 +95,7 @@ var BeamSource = function(brightness, posx, posy, width, theta) {
     this.width = width;
     this.theta = theta;
     this.brightness = brightness;
+    this.twoD = true;
     this.init();
 };
 BeamSource.prototype.init = function() {
@@ -84,6 +105,7 @@ BeamSource.prototype.init = function() {
     this.endy = this.posy + 0.5 * this.width * Math.sin(this.theta + 0.5 * Math.PI);
     this.dx = this.endx - this.startx;
     this.dy = this.endy - this.starty;
+    this.intersectObject = new Line(this.posx, this.posy, this.theta, this.width, 1.0, 0.0, 0.0);
 };
 BeamSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -102,6 +124,11 @@ BeamSource.prototype.getLightRays = function(num) {
 BeamSource.prototype.getName = function() {
     return "Beam at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
 };
+BeamSource.prototype.intersect = function(ray) {
+    return this.intersectObject.intersect(ray);
+};
+
+
 
 var LaserSource = function(brightness, posx, posy, theta) {
     this.posx = posx;
@@ -110,6 +137,11 @@ var LaserSource = function(brightness, posx, posy, theta) {
     this.dx = this.endx - posx;
     this.dy = this.endy - posy;
     this.brightness = brightness;
+    this.rradius = 0.03;
+    this.init();
+};
+LaserSource.prototype.init = function() {
+    this.intersectObject = new Cylinder(this.posx, this.posy, this.rradius, 1.0, 0.0, 1.0, 0.0);
 };
 LaserSource.prototype.getLightRays = function(num) {
     var rays = [];
@@ -123,6 +155,9 @@ LaserSource.prototype.getLightRays = function(num) {
 };
 LaserSource.prototype.getName = function() {
     return "Laser at (" + this.posx.toFixed(2) + ", " + this.posy.toFixed(2) + ")";
+};
+LaserSource.prototype.intersect = function(ray) {
+    return this.intersectObject.intersect(ray);
 };
 
 nmToRGB = function (wavelength) {
