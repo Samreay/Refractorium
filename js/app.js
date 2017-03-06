@@ -74,6 +74,12 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             self.selectedObject = self.sceneObjects[self.activeObjectIndex];
             self.computeObjectProperties();
         };
+        self.removeObject = function() {
+            self.activeSceneObj.scene.objects.splice(self.activeObjectIndex, 1);
+            self.activeObjectIndex = null;
+            self.selectedObject = null;
+            self.renderer.init();
+        };
         self.getSelectedObjectProperties = function() {
             return self.selectedObjectProperties;
         };
