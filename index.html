@@ -15,7 +15,7 @@
 
 
     <div class="sidebar">
-        <h1>Refractorium</h1>
+        <h1 style="margin-top: 0;">Refractorium</h1>
 
         <h4>Render Settings</h4>
 
@@ -31,8 +31,14 @@
 
         <h4>Scenes</h4>
 
-        <select class="form-control" name="repeatSelect" id="repeatSelect" ng-model="ctrl.activeScene" ng-change="ctrl.selectScene(scene)">
+        <select class="form-control" name="sceneSelect" id="sceneSelect" ng-model="ctrl.activeScene" ng-change="ctrl.selectScene()">
             <option ng-repeat="scene in ctrl.scenes" value="{{scene.name}}">{{scene.name}}</option>
+        </select>
+
+        <h4>Objects</h4>
+
+        <select class="form-control" name="objectSelect" id="objectSelect" ng-model="ctrl.activeObjectIndex" ng-change="ctrl.selectObject()">
+            <option ng-repeat="object in ctrl.sceneObjects" value="{{$index}}">{{object.getName()}}</option>
         </select>
 
         <div ng-show="ctrl.selectedObject != null">
@@ -53,19 +59,6 @@
                 <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
             </div>
 
-
-            <div class="row">
-                <div id="scenes" class="col-lg-4">
-
-
-                </div>
-                <div id="sceneObjects" class="col-lg-4">
-                    <h2>Objects</h2>
-                    <div class="row" ng-repeat="object in ctrl.getSceneObjects()">
-                        <p ng-click="ctrl.selectObject(object)">{{object.getName()}}</p>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

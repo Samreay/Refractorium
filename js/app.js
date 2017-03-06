@@ -2,7 +2,7 @@
 
 angular.module('refractorium', ['servicesZ', 'rzModule'])
 
-    .controller('MainController', ['scenesService', function(scenesService) {
+    .controller('MainController', ['scenesService', '$timeout', function(scenesService, $timeout) {
         var self = this;
 
         self.width = 1080;
@@ -25,31 +25,37 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
 
         self.scenes = scenesService.getScenes();
         self.activeScene = self.scenes[0].name;
+        self.activeSceneObj = self.scenes[0].scene;
+        self.sceneObjects = [];
+        self.activeObjectIndex = null;
         self.selectedObject = null;
         self.selectedObjectProperties = [];
+        self.activeObject = null;
 
         self.selectScene = function() {
             for (var i = 0; i < self.scenes.length; i++) {
                 if (self.scenes[i].name == self.activeScene) {
+                    self.activeSceneObj = self.scenes[i];
                     self.renderer.setScene(self.scenes[i].scene);
                     break;
                 }
             }
+            self.sceneObjects = self.activeSceneObj.scene.objects;
         };
         self.isScene = function(scene) {
             return self.renderer.scene == scene.scene;
-        };
-        self.getSceneObjects = function() {
-            return self.renderer.scene.objects;
         };
         self.getSceneLights = function() {
             return self.renderer.scene.lightSources;
         };
         self.getObjName = function() {
+            if (self.selectedObject == null) {
+                return "";
+            }
             return self.selectedObject.getName();
         };
-        self.selectObject = function(object) {
-            self.selectedObject = object;
+        self.selectObject = function() {
+            self.selectedObject = self.sceneObjects[self.activeObjectIndex];
             self.computeObjectProperties();
         };
         self.getSelectedObjectProperties = function() {
