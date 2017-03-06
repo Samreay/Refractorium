@@ -15,6 +15,15 @@ var Scene = function(aspect) {
 Scene.prototype.addObject = function(obj) {
     this.objects.push(obj);
 };
+Scene.prototype.getTotalBrightness = function() {
+    var totalBrightness = 0;
+    for (var i = 0; i < this.objects.length; i++) {
+        if (this.objects[i].brightness != undefined) {
+            totalBrightness += this.objects[i].brightness;
+        }
+    }
+    return totalBrightness;
+};
 Scene.prototype.addLightRays = function(num, numBounces) {
     var lightSources = [];
     var totalBrightness = 0;

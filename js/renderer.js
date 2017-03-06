@@ -97,7 +97,8 @@ Renderer.prototype.render = function() {
         if (this.showFinal) {
             vec_add(this.tempBuffer, frameBuffer);
             // vec_normalise_channels(this.tempBuffer, this.finalBuffer);
-            vec_normalise(this.tempBuffer, this.finalBuffer, this.exposure);
+            var totalBrightness = this.scene.getTotalBrightness();
+            vec_normalise(this.tempBuffer, this.finalBuffer, totalBrightness * this.exposure);
             vec_add(this.finalBuffer, this.backgroundBuffer);
             vec_clip(this.finalBuffer, this.image.data);
         } else {
