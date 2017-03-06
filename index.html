@@ -54,8 +54,18 @@
     <div id="page-content-wrapper">
         <div class="container-fluid notsidebar">
             <div id="canvases">
-                <canvas id="mainCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-click="ctrl.canvasClick($event)" ng-dblclick="ctrl.switchPlots()"></canvas>
-                <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}" ng-click="ctrl.canvasClick($event)" ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
+                <canvas id="mainCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}"
+                        ng-mouseup="ctrl.canvasMouseUp($event)"
+                        ng-mouseleave="ctrl.canvasMouseLeave($event)"
+                        ng-mousemove="ctrl.canvasMouseMove($event)"
+                        ng-mousedown="ctrl.canvasClick($event)"
+                        ng-dblclick="ctrl.switchPlots()"></canvas>
+                <canvas id="hiddenCanvas" width="{{ctrl.width}}" height="{{ctrl.height}}"
+                        ng-mouseup="ctrl.canvasMouseUp($event)"
+                        ng-mouseleave="ctrl.canvasMouseLeave($event)"
+                        ng-mousemove="ctrl.canvasMouseMove($event)"
+                        ng-mousedown="ctrl.canvasClick($event)"
+                        ng-dblclick="ctrl.switchPlots()" style="display: none"></canvas>
             </div>
 
         </div>

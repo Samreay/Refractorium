@@ -31,6 +31,7 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         self.selectedObject = null;
         self.selectedObjectProperties = [];
         self.activeObject = null;
+        self.mouseDownAndSelected = false;
 
         self.selectScene = function() {
             for (var i = 0; i < self.scenes.length; i++) {
@@ -74,6 +75,32 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             var objectIndex = self.activeSceneObj.scene.getObjectFromClick($event.offsetX / self.height, $event.offsetY / self.height);
             self.activeObjectIndex = "" + objectIndex;
             self.selectObject();
+            if (self.activeObjectIndex != "") {
+                self.mouseDownAndSelected = true;
+            }
+            if($event.stopPropagation) $event.stopPropagation();
+            if($event.preventDefault) $event.preventDefault();
+            $event.cancelBubble = true;
+            $event.returnValue = false
+        };
+
+        self.canvasMouseUp = function($event) {
+            self.mouseDownAndSelected = false;
+        };
+        self.canvasMouseLeave = function($event) {
+            self.mouseDownAndSelected = false;
+        };
+        self.canvasMouseMove = function($event) {
+            if (self.mouseDownAndSelected) {
+                var x = $event.offsetX / self.height;
+                var y = $event.offsetY / self.height;
+                self.selectedObject.posx = x;
+                self.selectedObject.posy = y;
+                if (self.selectedObject.init != undefined) {
+                    self.selectedObject.init();
+                }
+                self.renderer.init();
+            }
         };
 
         self.computeObjectProperties = function() {
