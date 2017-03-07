@@ -41,22 +41,10 @@ angular.module('servicesZ', []).service("scenesService", [function () {
 
 
 
-    scene = new Scene(aspect);
-    scene.addObject(new PointSource(1.0, 0.392, 0.296));
-    scene.addObject(new PointSource(0.8, 1.046, 0.344));
-    scene.addObject(new PointSource(0.8, 0.7176, 0.825));
-    scene.addObject(new PointSource(1.0, 1.178, 0.763));
-    scene.addObject(new PointSource(0.2, 0.679, 0.59));
-    scene.addObject(new Cylinder(0.3, 0.57, 0.1, 0.0, 0.0, 1.3, 0.0));
-    scene.addObject(new Cylinder(0.7, 0.28, 0.13, 0.0, 0.0, 1.3, 0.0));
-    scene.addObject(new ConvexLens(0.7, 0.7, 0.245, 0.238, 0.54, 0.0, 0.0, 1.5, 0.0));
-    scene.addObject(new ConvexLens(0.9, 0.61, 0.166, 4.03, 0.75, 0.0, 0.0, 1.5, 0.0));
-    // scene.addObject(new Line(0.75, 0, 0, 1.5, 0.3, 1.0, 1.0, 0.5));
-    // scene.addObject(new Line(0.75, 1, 0, 1.5, 0.3, 1.0, 1.0, 0.5));
-    // scene.addObject(new Line(0, 0.5, Math.PI / 2, 1, 0.3, 1.0, 0.5));
-    // scene.addObject(new Line(1.5, 0.5, Math.PI / 2, 1, 0.3, 1.0, 0.5));
 
-    scenes.push({"name": "Southern Cross", "scene": scene});
+    scene = new Scene(aspect);
+    scene.addObject(new PointSource(1.0, 0.75, 0.5));
+    scenes.push({"name": "Blank", "scene": scene});
 
     if (false) {
         scene = new Scene(aspect);
@@ -69,11 +57,6 @@ angular.module('servicesZ', []).service("scenesService", [function () {
         scene.addObject(new PointSource(1.0, 0.3, 0.5));
         scene.addObject(new ConvexLens(0.7, 0.5, 0.2, 0, 0.6, 0, 0, 1.5, 0));
         scenes.push({"name": "Convex", "scene": scene});
-
-        scene = new Scene(aspect);
-        scene.addObject(new PointSource(1.0, 0.75, 0.5));
-        scenes.push({"name": "Blank", "scene": scene});
-
     }
 
     self.getScenes = function () {
