@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Refractorium</title>
+    <link rel="shortcut icon" href="img/favicon.ico" />
+
     <script src="lib/angular.js"></script>
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -11,33 +13,43 @@
 
 
 </head>
-<body ng-controller="MainController as ctrl">
+<body ng-controller="MainController as ctrl" class="dark">
 
 
     <div class="sidebar">
-        <h1 style="margin-top: 0;">Refractorium</h1>
-
-        <h4>Render Settings</h4>
+        <img src="img/Name.png" style="margin-left: -5px; margin-bottom: 20px; width: 100%;">
         <p>Double click canvas for fun.</p>
-        <label for="NumRayPerFrame">Rays Per Frame:</label>
-        <rzslider class="custom" id="NumRayPerFrame" rz-slider-model="ctrl.renderer.numRaysPerFrame" rz-slider-options="ctrl.sliderNumRaysPerFrameOptions"></rzslider>
+        <p><a href="http://samreay.github.io">See here for more projects.</a></p>
+
+        <h4 style="cursor: pointer;" ng-click="ctrl.clickRenderSettings()">Render Settings </h4>
+        <div ng-show="ctrl.renderSettingVisible">
+            <label>Canvas Size</label>
+            <div class="btn-group" style="font-size: 0.8em;">
+                <button class="btn btn-default" ng-click="ctrl.resize(size.height)" ng-class="{active: size.height == ctrl.selectedSize}" ng-repeat="size in ctrl.sizes">{{size.label}}</button>
+            </div>
+
+            <label for="NumRayPerFrame">Rays Per Frame:</label>
+            <rzslider class="custom" id="NumRayPerFrame" rz-slider-model="ctrl.renderer.numRaysPerFrame" rz-slider-options="ctrl.sliderNumRaysPerFrameOptions"></rzslider>
 
 
-        <!--<label for="NumBounces">Number of Light Bounces:</label>-->
-        <!--<rzslider class="custom" id="NumBounces" rz-slider-model="ctrl.renderer.numBounces" rz-slider-options="ctrl.sliderBounceOptions"></rzslider>-->
+            <!--<label for="NumBounces">Number of Light Bounces:</label>-->
+            <!--<rzslider class="custom" id="NumBounces" rz-slider-model="ctrl.renderer.numBounces" rz-slider-options="ctrl.sliderBounceOptions"></rzslider>-->
 
-        <label for="Exposure">Exposure:</label>
-        <rzslider class="custom" id="Exposure" rz-slider-model="ctrl.renderer.exposure" rz-slider-options="ctrl.sliderExposureptions"></rzslider>
+            <label for="Exposure">Exposure:</label>
+            <rzslider class="custom" id="Exposure" rz-slider-model="ctrl.renderer.exposure" rz-slider-options="ctrl.sliderExposureptions"></rzslider>
+
+        </div>
 
         <h4>Scenes</h4>
 
-        <select class="form-control" name="sceneSelect" id="sceneSelect" ng-model="ctrl.activeScene" ng-change="ctrl.selectScene()">
+        <select class="form-control input-sm" name="sceneSelect" id="sceneSelect" ng-model="ctrl.activeScene" ng-change="ctrl.selectScene()">
             <option ng-repeat="scene in ctrl.scenes" value="{{scene.name}}">{{scene.name}}</option>
         </select>
 
         <h4>Objects</h4>
 
-        <select class="form-control" name="objectSelect" id="objectSelect" ng-model="ctrl.activeObjectIndex" ng-change="ctrl.selectObject()">
+        <select class="form-control input-sm" name="objectSelect" id="objectSelect" style="margin-bottom: 20px;"
+                ng-model="ctrl.activeObjectIndex" ng-change="ctrl.selectObject()">
             <option ng-repeat="object in ctrl.sceneObjects" value="{{$index}}">{{object.getName()}}</option>
         </select>
 
@@ -46,14 +58,14 @@
                 <label for="{{slider.key}}">{{slider.label}}</label>
                 <rzslider id="{{slider.key}}" class="custom" rz-slider-model="slider.value" rz-slider-options="slider.options" ></rzslider>
             </div>
-            <button class="btn btn-danger" ng-click="ctrl.removeObject()">Remove</button>
+            <button class="btn btn-danger" style="float: right; margin-top: 10px;" ng-click="ctrl.removeObject()">Remove</button>
         </div>
     </div>
     <!-- /#sidebar-wrapper -->
 
     <!-- Page Content -->
     <div id="page-content-wrapper">
-        <div class="container-fluid notsidebar">
+        <div class="notsidebar">
             <div class="topbar">
                 <div class="buttonbar">
                     <label>Add Object:</label>

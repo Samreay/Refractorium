@@ -2,15 +2,16 @@
 
 angular.module('refractorium', ['servicesZ', 'rzModule'])
 
-    .controller('MainController', ['scenesService', function(scenesService) {
+    .controller('MainController', ['scenesService', '$timeout', function(scenesService, $timeout) {
         var self = this;
 
         self.width = 1080;
         self.height = 720;
+        self.selectedSize = 720;
 
         self.canvas = document.getElementById("mainCanvas");
         self.canvas2 = document.getElementById("hiddenCanvas");
-
+        self.canvases = document.getElementById("canvases");
         self.renderer = new Renderer(self.width, self.height, self.canvas, self.canvas2, 500, 19);
 
         self.switchPlots = function() {
@@ -35,7 +36,34 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         self.xdown = null;
         self.ydown = null;
         self.generator = new Generator();
+        self.renderSettingVisible = false;
 
+        self.sizes = [{label: "Fill", height: null}, {label: "720p", height: 720}, {label: "1080p", height: 1080}];
+        self.resize = function(height) {
+            self.selectedSize = height;
+            if (height == null) {
+                var w = self.canvases.clientWidth;
+                var h1 = self.canvases.clientHeight;
+                var h2 = w / 1.5;
+                height = Math.min(h1, h2);
+            }
+            self.width = height * 1.5;
+            self.height = height;
+            $timeout(function() {
+                self.renderer.updateDimensions(self.width, self.height);
+            });
+        };
+        window.onresize = function() {
+            if (self.selectedSize == null) {
+                self.resize(null);
+            }
+        };
+        self.clickRenderSettings = function() {
+            self.renderSettingVisible = !self.renderSettingVisible;
+            self.selectedObject = null;
+            self.selectedObjectProperties = [];
+            self.activeObjectIndex = null;
+        };
         self.addObject = function(objtype) {
             self.generator.addObjectToScene(self.activeSceneObj.scene, objtype);
             self.sceneObjects = self.activeSceneObj.scene.objects;
@@ -46,7 +74,6 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             self.sceneObjects = self.activeSceneObj.scene.objects;
             self.renderer.init();
         };
-
 
         self.selectScene = function() {
             for (var i = 0; i < self.scenes.length; i++) {
@@ -72,6 +99,7 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         };
         self.selectObject = function() {
             self.selectedObject = self.sceneObjects[self.activeObjectIndex];
+            self.renderSettingVisible = false;
             self.computeObjectProperties();
         };
         self.removeObject = function() {
