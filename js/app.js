@@ -65,13 +65,15 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             self.activeObjectIndex = null;
         };
         self.addObject = function(objtype) {
-            self.generator.addObjectToScene(self.activeSceneObj.scene, objtype);
+            self.activeObjectIndex = "" + self.generator.addObjectToScene(self.activeSceneObj.scene, objtype);
             self.sceneObjects = self.activeSceneObj.scene.objects;
+            self.selectObject();
             self.renderer.init();
         };
         self.addLight = function(objtype) {
-            self.generator.addLightToScene(self.activeSceneObj.scene, objtype);
+            self.activeObjectIndex =  "" +self.generator.addLightToScene(self.activeSceneObj.scene, objtype);
             self.sceneObjects = self.activeSceneObj.scene.objects;
+            self.selectObject();
             self.renderer.init();
         };
 
