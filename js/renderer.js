@@ -25,7 +25,7 @@ var Renderer = function(width, height, finalCanvas, hiddenCanvas, numRaysPerFram
 
     this.strokeStyle = "rgba(255, 255, 255, 0.2)";
     // this.strokeStyle = "#FF0000";
-    this.fillStyle = "rgba(100, 100, 100, 0.2)";
+    this.fillStyle = "rgba(100, 100, 100, 0.1)";
     // this.fillStyle = "rgba(0, 0, 0, 0)";
 };
 Renderer.prototype.updateDimensions = function(w, h) {
