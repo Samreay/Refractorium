@@ -39,6 +39,18 @@ angular.module('servicesZ', []).service("scenesService", [function () {
     scenes.push({"name": "Mixed Bag", "scene": scene});
 
 
+    scene = new Scene(aspect);
+    scene.addObject(new PointSource(1.0, 1.13, 0.5));
+    scene.addObject(new Cylinder(0.75, 0.5, 0.23, 0, 0, 1.5, 0));
+    scene.addObject(new ConvexLens(0.987, 0.5, 0.231, 0, 0.628, 0, 0, 1.5, 0));
+    scene.addObject(new ConvexLens(1.229, 0.586, 0.144, 3.832, 0.692, 0, 0, 1.5, 0));
+    scene.addObject(new Line(1.393, 0.731, 5.7, 0.196, 0, 1, 0));
+    scene.addObject(new Line(1.179, 0.154, 3.671, 0.251, 0, 1, 0));
+    scene.addObject(new Prism(0.825, 0.267, 0.077, 4.992, 0, 0, 1.5, 0));
+    scene.addObject(new ConvexLens(1.097, 0.638, 0.21, 1.868, 0.926, 0, 0, 1.6, 0));
+    scene.addObject(new Line(1.044, 0.943, 3.478, 0.287, 0, 1, 1));
+    scenes.push({"name": "The Cylinder", "scene": scene});
+
 
 
 
