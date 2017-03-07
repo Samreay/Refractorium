@@ -88,7 +88,11 @@ body.dark {
     float: right;
 }
 #canvases {
-    height: 100%;
+    right: 0;
+    bottom: 0;
+    top: 50px;
+    left: 250px;
+    position: fixed;
 }
 canvas {
     cursor: crosshair;

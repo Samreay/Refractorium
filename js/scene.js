@@ -449,15 +449,15 @@ Generator.prototype.getObjectNames = function() {
 Generator.prototype.addObjectToScene = function(scene, objectType) {
     var obj = null;
     if (objectType == "Line") {
-        obj = new Line(Math.random() * 1.5, Math.random(), 2 * Math.PI * Math.random(), 0.1 + 0.2 * Math.random(), Math.random(), Math.random(), Math.random());
+        obj = new Line(Math.random() * 1.777, Math.random(), 2 * Math.PI * Math.random(), 0.1 + 0.2 * Math.random(), Math.random(), Math.random(), Math.random());
     } else if (objectType == "Box") {
-        obj = new Box(Math.random() * 1.5, Math.random(), 0.1 + 0.1 * Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.random(), 0, 0, 1.5, 0);
+        obj = new Box(Math.random() * 1.777, Math.random(), 0.1 + 0.1 * Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.random(), 0, 0, 1.5, 0);
     } else if (objectType == "Prism") {
-        obj = new Prism(Math.random() * 1.5, Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.random(), 0, 0, 1.5, 0);
+        obj = new Prism(Math.random() * 1.777, Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.random(), 0, 0, 1.5, 0);
     } else if (objectType == "Cylinder") {
-        obj = new Cylinder(Math.random() * 1.5, Math.random(), 0.1 + 0.1 * Math.random(), 0, 0, 1.5, 0);
+        obj = new Cylinder(Math.random() * 1.777, Math.random(), 0.1 + 0.1 * Math.random(), 0, 0, 1.5, 0);
     } else if (objectType == "Convex") {
-        obj = new ConvexLens(Math.random() * 1.5, Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.random(), 0.1 + 0.3 * Math.PI * Math.random(), 0, 0, 1.5, 0);
+        obj = new ConvexLens(Math.random() * 1.777, Math.random(), 0.1 + 0.1 * Math.random(), 2 * Math.PI * Math.random(), 0.1 + 0.3 * Math.PI * Math.random(), 0, 0, 1.5, 0);
     }
     scene.addObject(obj);
     return scene.objects.length - 1;
@@ -465,13 +465,13 @@ Generator.prototype.addObjectToScene = function(scene, objectType) {
 Generator.prototype.addLightToScene = function(scene, objectType) {
     var obj = null;
     if (objectType == "Point") {
-        obj = new PointSource(1.0, Math.random() * 1.5, Math.random());
+        obj = new PointSource(1.0, Math.random() * 1.777, Math.random());
     } else if (objectType == "Cone") {
-        obj = new ConeSource(1.0, Math.random() * 1.5, Math.random(), 2 * Math.PI * Math.random(), 0.5 * Math.PI * Math.random());
+        obj = new ConeSource(1.0, Math.random() * 1.777, Math.random(), 2 * Math.PI * Math.random(), 0.5 * Math.PI * Math.random());
     } else if (objectType == "Beam") {
-        obj = new BeamSource(1.0, Math.random() * 1.5, Math.random(), 0.1 + 0.2 * Math.random(), 2 * Math.PI * Math.random());
+        obj = new BeamSource(1.0, Math.random() * 1.777, Math.random(), 0.1 + 0.2 * Math.random(), 2 * Math.PI * Math.random());
     } else if (objectType == "Laser") {
-        obj = new LaserSource(1.0, Math.random() * 1.5, Math.random(), 2 * Math.PI * Math.random());
+        obj = new LaserSource(1.0, Math.random() * 1.777, Math.random(), 2 * Math.PI * Math.random());
     }
     scene.addObject(obj);
     return scene.objects.length - 1;

@@ -5,7 +5,7 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
     .controller('MainController', ['scenesService', '$timeout', function(scenesService, $timeout) {
         var self = this;
 
-        self.width = 1080;
+        self.width = 1280;
         self.height = 720;
         self.selectedSize = 720;
 
@@ -44,14 +44,14 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             if (height == null) {
                 var w = self.canvases.clientWidth;
                 var h1 = self.canvases.clientHeight;
-                var h2 = w / 1.5;
+                var h2 = w / (16.0/9.0);
                 height = Math.min(h1, h2);
             }
-            self.width = height * 1.5;
+            self.width = height * (16.0/9.0);
             self.height = height;
             $timeout(function() {
                 self.renderer.updateDimensions(self.width, self.height);
-            });
+            }, 50);
         };
         window.onresize = function() {
             if (self.selectedSize == null) {
@@ -114,6 +114,9 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
             return self.selectedObjectProperties;
         };
         self.updateProperty = function(property, value) {
+            if (property == "posx") {
+                value *=  (16.0/9.0);
+            }
             self.selectedObject[property] = value;
             if (self.selectedObject.init != undefined) {
                 self.selectedObject.init();
@@ -180,7 +183,7 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
                 self.selectedObjectProperties.push({key: "brightness", label: "Brightness", value: o.brightness, options: {floor: 0, ceil: 2, step: 0.01, precision: 3}})
             }
             if (o.posx != undefined) {
-                self.selectedObjectProperties.push({key: "posx", label: "Position x", value: o.posx,  options: {floor: 0, ceil: 1.5, step: 0.001, precision: 3}})
+                self.selectedObjectProperties.push({key: "posx", label: "Position x", value: o.posx / (16.0/9.0),  options: {floor: 0, ceil: 1, step: 0.001, precision: 3}})
             }
             if (o.posy != undefined) {
                 self.selectedObjectProperties.push({key: "posy", label: "Position y", value: o.posy,  options: {floor: 0, ceil: 1, step: 0.001, precision: 3}})

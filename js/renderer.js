@@ -89,8 +89,7 @@ Renderer.prototype.renderFrame = function() {
         }
     }
     this.scene.lightRaysToRender = [];
-    var ret = ctx.getImageData(0, 0, this.w, this.h).data;
-    return ret;
+    return ctx.getImageData(0, 0, this.w, this.h).data;
 };
 Renderer.prototype.render = function() {
     if (this.scene == null) {
