@@ -17,11 +17,11 @@
 
 
     <div class="sidebar">
-        <img src="img/name.png" style="margin-left: -5px; margin-bottom: 20px; width: 100%;">
+        <img src="img/name.png" style="margin-bottom: 20px; width: 100%;">
         <p>Double click canvas for fun.</p>
         <p><a href="http://samreay.github.io/project/2017/03/07/refractorium.html" target="_blank" >See here for more details!</a></p>
 
-        <h4 style="cursor: pointer;" ng-click="ctrl.clickRenderSettings()">Render Settings </h4>
+        <h4 style="cursor: pointer;" ng-click="ctrl.clickRenderSettings()">Render Settings  {{ctrl.renderSettingVisible ? "&#x25b2;" : "&#x25bc;"}}</h4>
         <div ng-show="ctrl.renderSettingVisible">
             <label>Canvas Size</label>
             <div class="btn-group" style="font-size: 0.8em;">

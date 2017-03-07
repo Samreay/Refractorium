@@ -221,7 +221,7 @@ angular.module('refractorium', ['servicesZ', 'rzModule'])
         };
         self.sliderBounceOptions = {
             floor: 1,
-            ceil: 20,
+            ceil: 30,
             onChange: function() {
                 self.renderer.init();
             }
