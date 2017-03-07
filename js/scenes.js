@@ -58,17 +58,23 @@ angular.module('servicesZ', []).service("scenesService", [function () {
     scene.addObject(new PointSource(1.0, 0.75, 0.5));
     scenes.push({"name": "Blank", "scene": scene});
 
-    if (false) {
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
         scene = new Scene(aspect);
-        scene.addObject(new LaserSource(1.0, 0.88, 0.5, 4.742));
-        scene.addObject(new Box(0.75, 0.5, 0.3, 0.3, 0.2, 0.0, 0.0, 0.23, 0.0));
-        scenes.push({"name": "Box", "scene": scene});
+        scene.addObject(new BeamSource(1.0, 0.13, 0.1, 0.1, 1.0));
+        scene.addObject(new Line(0.64, 0.9, 0, 0.2, 0, 1, 0));
+        scene.addObject(new Line(0.949, 0.443, 0, 0.2, 0, 0.3, 0));
+        scene.addObject(new Line(1.232, 0.9, 0, 0.2, 1, 0, 0));
+        scene.addObject(new Line(1.155, 0.1, 0, 0.2, 0.6, 1.0, 0.1));
+        scenes.push({"name": "Line Test", "scene": scene});
 
 
         scene = new Scene(aspect);
-        scene.addObject(new PointSource(1.0, 0.3, 0.5));
-        scene.addObject(new ConvexLens(0.7, 0.5, 0.2, 0, 0.6, 0, 0, 1.5, 0));
-        scenes.push({"name": "Convex", "scene": scene});
+        scene.addObject(new BeamSource(1.0, 0.13, 0.1, 0.1, 0.741));
+        scene.addObject(new Box(0.26, 0.215, 0.223, 0.067, 1.642, 0, 0, 1.5, 0));
+        scene.addObject(new Box(0.489, 0.471, 0.569, 0.169, 1.642, 0, 0.2, 1.7, 0));
+        scene.addObject(new ConvexLens(0.714, 0.518, 0.2, 4.026, 0.29, 0, 0, 1.54, 0));
+        scene.addObject(new Prism(1.031, 0.675, 0.186, 1.18, 0, 0.333, 1.5, 0.2));
+        scenes.push({"name": "Refractive Test", "scene": scene});
     }
 
     self.getScenes = function () {
