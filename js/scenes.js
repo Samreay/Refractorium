@@ -6,6 +6,21 @@ angular.module('servicesZ', []).service("scenesService", [function () {
     var scenes = [];
     var scene;
 
+
+    scene = new Scene(aspect);
+    scene.addObject(new ConeSource(1.0, 0.03, 0.9, 6.0, 0.001));
+    scene.addObject(new Line(0.4, 0.7821, 5.3, 0.1, 0.0, 0.2, 0.0));
+    scene.addObject(new Cylinder(0.286, 0.315, 0.155, 0.0, 0.0, 1.5, 0.0));
+    scene.addObject(new Prism(0.418, 0.493, 0.134, 2.028, 0.0, 0.0, 1.5, 0.0));
+    scene.addObject(new ConvexLens(1.058, 0.507, 0.235, 2.243, 0.761, 0.0, 0.0, 1.5, 0.0));
+    scene.addObject(new Line(0.75, 0.00, 0, 1.5, 0.0, 1.0, 0.9));
+    scene.addObject(new Line(0.75, 1.0, 0, 1.5, 0.0, 1.0, 0.9));
+    scene.addObject(new Line(1.4, 0.9, 5.4, 0.2, 0.0, 1.0, 0.05));
+
+    scenes.push({"name": "Bouncing Light", "scene": scene});
+
+
+
     scene = new Scene(aspect);
     scene.addObject(new PointSource(1.0, 0.8, 0.3));
     scene.addObject(new ConeSource(0.1, 0.01, 0.73, 2 * Math.PI - 0.3, 0.0003));
@@ -23,17 +38,6 @@ angular.module('servicesZ', []).service("scenesService", [function () {
 
     scenes.push({"name": "Mixed Bag", "scene": scene});
 
-    scene = new Scene(aspect);
-    scene.addObject(new ConeSource(1.0, 0.03, 0.9, 6.0, 0.001));
-    scene.addObject(new Line(0.4, 0.7821, 5.3, 0.1, 0.0, 0.2, 0.0));
-    scene.addObject(new Cylinder(0.286, 0.315, 0.155, 0.0, 0.0, 1.5, 0.0));
-    scene.addObject(new Prism(0.418, 0.493, 0.134, 2.028, 0.0, 0.0, 1.5, 0.0));
-    scene.addObject(new ConvexLens(1.058, 0.507, 0.235, 2.243, 0.761, 0.0, 0.0, 1.5, 0.0));
-    scene.addObject(new Line(0.75, 0.00, 0, 1.5, 0.0, 1.0, 0.9));
-    scene.addObject(new Line(0.75, 1.0, 0, 1.5, 0.0, 1.0, 0.9));
-    scene.addObject(new Line(1.4, 0.9, 5.4, 0.2, 0.0, 1.0, 0.05));
-
-    scenes.push({"name": "Bouncing Light", "scene": scene});
 
 
 
