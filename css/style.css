@@ -99,7 +99,8 @@ canvas {
     margin: 0 auto;
     display: block;
     top: 50%;
-    transform: translateY(-48%);
-    position: relative;
+    left: 50%;
+    transform: translateY(-50%) translateX(-50%);
+    position: absolute;
 }
 
