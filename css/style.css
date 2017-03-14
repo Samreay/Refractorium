@@ -93,6 +93,7 @@ body.dark {
     top: 50px;
     left: 250px;
     position: fixed;
+    overflow: auto;
 }
 canvas {
     cursor: crosshair;
